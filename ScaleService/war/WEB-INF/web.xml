@@ -5,12 +5,12 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
 	<servlet>
-		<servlet-name>ScaleService</servlet-name>
-		<servlet-class>scaleService.ScaleServiceServlet</servlet-class>
+		<servlet-name>addSensor</servlet-name>
+		<servlet-class>scaleService.AddSensor</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ScaleService</servlet-name>
-		<url-pattern>/scaleservice</url-pattern>
+		<servlet-name>addSensor</servlet-name>
+		<url-pattern>/add_sensor</url-pattern>
 	</servlet-mapping>
 	<servlet>
         <servlet-name>sign</servlet-name>
@@ -19,6 +19,14 @@
     <servlet-mapping>
         <servlet-name>sign</servlet-name>
         <url-pattern>/sign</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>viewSensor</servlet-name>
+        <servlet-class>scaleService.ViewSensor</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>viewSensor</servlet-name>
+        <url-pattern>/view_sensor</url-pattern>
     </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

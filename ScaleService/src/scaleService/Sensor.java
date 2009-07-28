@@ -10,7 +10,6 @@ import javax.jdo.annotations.PrimaryKey;
 public class Sensor
 {
 	/**
-	 * @param sensorID
 	 * @param sensorName
 	 * @param location
 	 * @param manufacturer
