@@ -12,14 +12,6 @@
 		<servlet-name>addSensor</servlet-name>
 		<url-pattern>/add_sensor</url-pattern>
 	</servlet-mapping>
-	<servlet>
-        <servlet-name>sign</servlet-name>
-        <servlet-class>scaleService.SignGuestbookServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>sign</servlet-name>
-        <url-pattern>/sign</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>viewSensor</servlet-name>
         <servlet-class>scaleService.ViewSensor</servlet-class>
