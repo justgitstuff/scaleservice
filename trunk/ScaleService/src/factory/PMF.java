@@ -1,4 +1,4 @@
-package scaleService;
+package factory;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
