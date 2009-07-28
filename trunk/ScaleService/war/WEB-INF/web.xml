@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+	<servlet>
+		<servlet-name>ScaleService</servlet-name>
+		<servlet-class>scaleService.ScaleServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ScaleService</servlet-name>
+		<url-pattern>/scaleservice</url-pattern>
+	</servlet-mapping>
+	<servlet>
+        <servlet-name>sign</servlet-name>
+        <servlet-class>scaleService.SignGuestbookServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>sign</servlet-name>
+        <url-pattern>/sign</url-pattern>
+    </servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
