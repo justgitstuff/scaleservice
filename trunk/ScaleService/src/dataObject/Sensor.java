@@ -25,86 +25,22 @@ import factory.SensorDataFactory;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Sensor
 {
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key sensorID;
-	@Persistent
-	private String sensorName;
-	@Persistent
-	private String location;
-	@Persistent
-	private String manufacturer;
-	@Persistent
-	private List<SensorData> sensorData;
-	/**
-	 * @param sensorName
-	 * @param location
-	 * @param manufacturer
-	 */
-	public Sensor(String sensorName, String location,
-			String manufacturer)
+	@SuppressWarnings("unchecked")
+	public static Sensor getSensor(String sensorTag)
 	{
-		this.sensorName = sensorName;
-		this.location = location;
-		this.manufacturer = manufacturer;
-		this.sensorData=new ArrayList<SensorData>();
-		this.sensorData.add(SensorDataFactory.get().newSensorData(1.22));
-	}
-	/**
-	 * @return the sensorName
-	 */
-	public String getSensorName()
-	{
-		return sensorName;
-	}
-	/**
-	 * @param sensorName the sensorName to set
-	 */
-	public void setSensorName(String sensorName)
-	{
-		this.sensorName = sensorName;
-	}
-	/**
-	 * @return the location
-	 */
-	public String getLocation()
-	{
-		return location;
-	}
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String location)
-	{
-		this.location = location;
-	}
-	/**
-	 * @return the manufacturer
-	 */
-	public String getManufacturer()
-	{
-		return manufacturer;
-	}
-	/**
-	 * @param manufacturer the manufacturer to set
-	 */
-	public void setManufacturer(String manufacturer)
-	{
-		this.manufacturer = manufacturer;
-	}
-	/**
-	 * @return the sensorID
-	 */
-	public Key getSensorID()
-	{
-		return sensorID;
-	}
-	/**
-	 * @param sensorID the sensorID to set
-	 */
-	public void setSensorID(Key sensorID)
-	{
-		this.sensorID = sensorID;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(Sensor.class);
+		query.setFilter("sensorTag == st");
+		query.declareParameters("String st");
+		List<Sensor> results = (List<Sensor>) query.execute(sensorTag);
+		if (results.iterator().hasNext())
+		{
+			return results.iterator().next();
+		}
+		else
+		{
+			return null;
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static Element getSensorXML()
@@ -112,8 +48,6 @@ public class Sensor
 		DocumentBuilder db;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Sensor.class);
-		//query.setFilter("manufacturer == manu");
-		//query.declareParameters("String manu");
 		try
 		{
 			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -132,10 +66,13 @@ public class Sensor
 			{
 				for (Sensor e : results)
 				{
-					Element dataItem=XMLDoc.createElement("row");
+					Element sensorItem=XMLDoc.createElement("sensor");
 
-					Element value=XMLDoc.createElement("sensorName");
-					value.appendChild(XMLDoc.createTextNode(e.getSensorName()));
+					Element sensorTag=XMLDoc.createElement("sensorTag");
+					sensorTag.appendChild(XMLDoc.createTextNode(e.getSensorTag()));
+					
+					Element sensorName=XMLDoc.createElement("sensorName");
+					sensorName.appendChild(XMLDoc.createTextNode(e.getSensorName()));
 					
 					Element location=XMLDoc.createElement("location");
 					location.appendChild(XMLDoc.createTextNode(e.getLocation()));
@@ -143,16 +80,131 @@ public class Sensor
 					Element manufacturer=XMLDoc.createElement("manufacturer");
 					manufacturer.appendChild(XMLDoc.createTextNode(e.getManufacturer()));
 					
-					dataItem.appendChild(value);
-					dataItem.appendChild(location);
-					dataItem.appendChild(manufacturer);
-					root.appendChild(dataItem);
+					sensorItem.appendChild(sensorTag);
+					sensorItem.appendChild(sensorName);
+					sensorItem.appendChild(location);
+					sensorItem.appendChild(manufacturer);
+					root.appendChild(sensorItem);
 				}
 			}
-		} finally
+		}
+		finally
 		{
 			pm.close();
 		}
 		return root;
+	}
+	@Persistent
+	private String location;
+	@Persistent
+	private String manufacturer;
+	@Persistent
+	private List<SensorData> sensorData;
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key sensorID;
+	@Persistent
+	private String sensorName;
+	@Persistent
+	private String sensorTag;
+	/**
+	 * @param sensorName
+	 * @param location
+	 * @param manufacturer
+	 */
+	public Sensor(String sensorTag,String sensorName, String location,
+			String manufacturer)
+	{
+		this.sensorTag=sensorTag;
+		this.sensorName = sensorName;
+		this.location = location;
+		this.manufacturer = manufacturer;
+		this.sensorData=new ArrayList<SensorData>();
+	}
+	public void addSensorData(double value)
+	{
+		this.sensorData.add(SensorDataFactory.get().newSensorData(value));
+	}
+	/**
+	 * @return the location
+	 */
+	public String getLocation()
+	{
+		return location;
+	}
+	/**
+	 * @return the manufacturer
+	 */
+	public String getManufacturer()
+	{
+		return manufacturer;
+	}
+	/**
+	 * @return the sensorID
+	 */
+	public Key getSensorID()
+	{
+		return sensorID;
+	}
+	/**
+	 * @return the sensorName
+	 */
+	public String getSensorName()
+	{
+		return sensorName;
+	}
+	/**
+	 * @return the sensorTag
+	 */
+	public String getSensorTag()
+	{
+		return sensorTag;
+	}
+	public void save()
+	{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try
+		{
+			pm.makePersistent(this);
+		} 
+		finally
+		{
+			pm.close();
+		}
+	}
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(String location)
+	{
+		this.location = location;
+	}
+	/**
+	 * @param manufacturer the manufacturer to set
+	 */
+	public void setManufacturer(String manufacturer)
+	{
+		this.manufacturer = manufacturer;
+	}
+	/**
+	 * @param sensorID the sensorID to set
+	 */
+	public void setSensorID(Key sensorID)
+	{
+		this.sensorID = sensorID;
+	}
+	/**
+	 * @param sensorName the sensorName to set
+	 */
+	public void setSensorName(String sensorName)
+	{
+		this.sensorName = sensorName;
+	}
+	/**
+	 * @param sensorTag the sensorTag to set
+	 */
+	public void setSensorTag(String sensorTag)
+	{
+		this.sensorTag = sensorTag;
 	}
 }
