@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="数据类型修改" showCloseButton="true" close="closeWindow();" 
+	 creationComplete="centerWindow();init();" width="370">
+	<mx:Script>
+		<![CDATA[
+		import lib.communicator.download.Sensor_SensorDataType;
+		import lib.communicator.download.Single_Sensor;
+		import lib.communicator.download.FilledDataType;
+		import lib.communicator.operation.EditSensorDataType;
+		import mx.managers.PopUpManager;
+		import lib.events.HSListEvent;
+		import lib.communicator.operation.EditSensor;
+		private var sid:uint;
+		public function set sensorDataTypeID(value:uint):void
+		{
+			this.sid=value;
+		}
+		public function centerWindow():void
+        {
+        	PopUpManager.centerPopUp(this);
+        }
+        
+        public function closeWindow():void
+        {
+        	PopUpManager.removePopUp(this);
+        }
+        
+        private function init():void
+        {
+        	
+        }
+        private function onEditDataType():void
+        {
+        	var es:EditSensorDataType=new EditSensorDataType();
+        	es.sensorDataTypeID=sid;
+        	es.typeName=ipt_dataTypeName.text;
+        	es.maxCustom=ipt_maxCustom.value;
+        	es.minCustom=ipt_minCustom.value;
+        	es.addEventListener(HSListEvent.OPERATION_SUCCESS,onEditSuccess);
+        	es.sendHS();
+        }
+        private function onEditSuccess(e:Event=null):void
+        {
+        	var filledDataType:FilledDataType=FilledDataType.getInstance();
+        	var ss:Sensor_SensorDataType=Sensor_SensorDataType.getInstance();
+        	if(ss.sensorID)
+        		ss.sendHS();
+        	filledDataType.sendHS();
+        	
+        	closeWindow();
+        }
+		]]>
+	</mx:Script>
+	
+	<mx:Form x="10" y="10" width="330">
+		<mx:FormHeading label="数据类型"/>
+		<mx:FormItem label="数据类型名" width="100%">
+			<mx:TextInput id="ipt_dataTypeName" width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem label="单位">
+			<mx:TextInput id="ipt_unit" editable="true" enabled="false"/>
+		</mx:FormItem>
+		<mx:FormItem label="最高期望值" width="100%">
+			<mx:HBox>
+				<mx:NumericStepper id="ipt_maxCustom" stepSize="0.01" maximum="999999999" minimum="-999999999"/>
+				<mx:Label text="C123456789" id="u1"/>
+			</mx:HBox>
+		</mx:FormItem>
+		<mx:FormItem label="最低期望值" width="100%">
+			<mx:HBox>
+				<mx:NumericStepper id="ipt_minCustom" stepSize="0.01" maximum="999999999" minimum="-999999999"/>
+				<mx:Label text="C123456789" id="u2"/>
+			</mx:HBox>
+		</mx:FormItem>
+	</mx:Form>
+	<mx:Button y="195" label="确定" click="onEditDataType();" icon="@Embed(source='../../img/yes.png')" horizontalCenter="-45"/>
+	<mx:Button y="195" label="取消" click="closeWindow();" icon="@Embed(source='../../img/no.png')" horizontalCenter="45"/>
+</mx:TitleWindow>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" height="100" styleName="MenuPanel" title="电子门禁">
+	<mx:Button label="添加许可..." height="100%"/>
+	<mx:VBox height="100%">
+		<mx:Button label="管理许可..." height="50%"/>
+		<mx:Button label="进出记录..." height="50%" width="100%"/>
+	</mx:VBox>
+	
+</mx:Panel>

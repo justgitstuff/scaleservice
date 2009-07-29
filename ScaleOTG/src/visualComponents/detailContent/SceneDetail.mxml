@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="500" height="400" fontSize="12" creationComplete="init();">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			import lib.communicator.download.AllSceneControl;
+			import lib.communicator.operation.DelSceneControl;
+			import mx.events.ItemClickEvent;
+			import lib.command.ShowAddSceneControl;
+			import lib.communicator.operation.DeleteScene;
+			import lib.communicator.operation.EditScene;
+			import lib.communicator.operation.EditSensor;
+			import lib.communicator.download.AllScene;
+			import lib.communicator.download.AllTarget;
+			import lib.communicator.download.AllCommand;
+			import lib.communicator.download.AllDataType;
+			import lib.events.HSListEvent;
+			import lib.events.ItemRendererEvent;
+			import lib.command.ShowAddOperation;
+			import lib.command.ShowEditSensor;
+			import lib.command.ShowEditSensorDataType;
+			import lib.command.Appcmd;
+			import lib.communicator.download.FilledDataType;
+			import mx.controls.Alert;
+			import lib.communicator.operation.EnterScene;
+			private var sDTID:uint;
+			private var invoker:Appcmd;
+			private var _sceneID:uint;
+			private var allCommand:AllCommand;
+			private var allTarget:AllTarget;
+			private function init():void
+			{
+				controlList.addEventListener(ItemRendererEvent.DELETE_ROW,onDeleteSceneControl);
+			}
+			public function set sceneID(value:uint):void
+			{
+				_sceneID=value;
+				var allScene:AllScene=AllScene.getInstance();
+				sceneName.text=allScene.recordXML.row.(@sceneID==this.sceneID).@sceneName;
+				ipt_sceneName.text=allScene.recordXML.row.(@sceneID==this.sceneID).@sceneName;
+				ipt_keyWord.text=allScene.recordXML.row.(@sceneID==this.sceneID).@keyWord;
+				ipt_advMin.value=Number(allScene.recordXML.row.(@sceneID==this.sceneID).@advMin);
+			}
+			public function get sceneID():uint
+			{
+				return _sceneID;
+			}
+			private function onSave():void
+			{
+				var editScene:EditScene=new EditScene();
+				editScene.sceneID=this.sceneID;
+				editScene.sceneName=this.ipt_sceneName.text;
+				editScene.keyWord=this.ipt_keyWord.text;
+				editScene.advMin=this.ipt_advMin.value;
+				editScene.addEventListener(HSListEvent.OPERATION_SUCCESS,onOperationSuccess);
+				editScene.sendHS();
+			}
+			private function onDelete():void
+			{
+				Alert.show("确认要删除场景"+sceneName.text+"吗?","删除场景",Alert.YES|Alert.NO,this,onConfirmDelete,null,Alert.NO);
+			}
+			private function onConfirmDelete(e:CloseEvent):void
+			{
+				if(e.detail==Alert.YES)
+				{
+					var deleteScene:DeleteScene=new DeleteScene();
+					deleteScene.sceneID=this.sceneID;
+					deleteScene.addEventListener(HSListEvent.OPERATION_SUCCESS,onOperationSuccess);
+					deleteScene.sendHS();
+				}
+			}
+			private function onOperationSuccess(e:Event=null):void
+			{
+				var allScene:AllScene=AllScene.getInstance();
+				allScene.sendHS();
+			}
+			private function showAddSceneControl():void
+			{
+				var invoker:Appcmd=Appcmd.getInstance();
+				invoker.showAddSceneControl.execute();
+			}
+			private function onDeleteSceneControl(e:ItemRendererEvent):void
+			{
+				var dsc:DelSceneControl=new DelSceneControl();
+				dsc.scID=e.contentID;
+				dsc.addEventListener(HSListEvent.OPERATION_SUCCESS,onDeleteSceneControlSuccess);
+				dsc.sendHS();
+			}
+			private function onDeleteSceneControlSuccess(e:Event=null):void
+			{
+				var a:AllSceneControl=AllSceneControl.getInstance();
+				a.sendHS();
+			}
+			private function enterScene():void
+			{
+				var esc:EnterScene=new EnterScene();
+				esc.sceneID=this.sceneID;
+				esc.sendHS();
+			}
+		]]>
+	</mx:Script>
+	<mx:Label text="场景名称" fontFamily="Times New Roman" fontWeight="bold" fontSize="16" id="sceneName" left="0" top="0"/>
+	<mx:DataGrid left="10" right="194" top="61" bottom="55" id="controlList">
+		<mx:columns>
+			<mx:DataGridColumn headerText="操作对象" dataField="@targetDescription"/>
+			<mx:DataGridColumn headerText="操作内容" dataField="@commandDescription"/>
+			<mx:DataGridColumn headerText="动作" itemRenderer="visualComponents.itemRenderers.SceneControlOperations"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Button label="添加" click="var invoker:Appcmd=Appcmd.getInstance();invoker.showAddScene.execute();" icon="@Embed(source='../../img/add.png')" bottom="10" left="10" width="86"/>
+	<mx:Label text="执行的操作" left="8" top="33"/>
+	<mx:Button label="删除" click="onDelete();" icon="@Embed(source='../../img/delete.png')" bottom="10" left="104" width="86" enabled="false" id="btn_delete"/>
+	<mx:Button label="保存" click="onSave();" icon="@Embed(source='../../img/save.png')" right="10" bottom="10" enabled="false" id="btn_save"/>
+	<mx:Label text="触发关键词" right="121" top="125"/>
+	<mx:TextInput width="176" right="10" top="153" id="ipt_keyWord"/>
+	<mx:Label text="提前进入时间" right="109" top="186"/>
+	<mx:NumericStepper width="129" right="57" top="208" id="ipt_advMin" maximum="180" minimum="0"/>
+	<mx:Label text="分钟" right="20" top="210"/>
+	<mx:Label text="场景名称" right="133" top="64"/>
+	<mx:TextInput id="ipt_sceneName" right="26" top="92"/>
+	<mx:LinkButton label="添加操作..." right="102" bottom="55" click="showAddSceneControl();" enabled="false" id="btn_addControl"/>
+	<mx:Button label="进入" icon="@Embed(source='../../img/favourites_us.png')" right="100" bottom="10" id="btn_enter" enabled="false" click="enterScene();"/>
+	
+</mx:Canvas>

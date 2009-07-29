@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" height="100" styleName="MenuPanel" title="常用">
+	<mx:Button label="打开QuickTouch" height="100%" toolTip="QuickTouch是Scale系统的简单浏览界面，您可以在QuickTouch上方便得查阅您所订阅的信息"/>
+	<mx:Button label="布局..." height="100%"/>
+	
+</mx:Panel>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:LinkButton x="0" y="0" label="更改..." click="showDataTypeDetail();"/>
+	<mx:Script>
+		<![CDATA[
+			import lib.events.ItemRendererEvent;
+			private function showDataTypeDetail(e:Event=null):void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.SHOW_DETAIL,true);
+				de.contentID=Number(data.@sensorDataTypeID);
+				dispatchEvent(de);
+			}
+		]]>
+	</mx:Script>
+	<mx:Metadata>
+		[Event(name="showDetail", type="lib.events.ItemRendererEvent")]
+	</mx:Metadata>
+</mx:Canvas>

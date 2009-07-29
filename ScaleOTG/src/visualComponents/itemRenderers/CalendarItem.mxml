@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="360" height="80" creationComplete="init();" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" fontSize="12">
+	<mx:Script>
+		<![CDATA[
+			import lib.events.ItemRendererEvent;
+			
+			private function init():void
+			{
+				
+			}
+			private function getInfo():void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.GET_INFO,true);
+				de.contentString=data.@content;
+				dispatchEvent(de);
+			}
+			private function enterScene():void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.ENTER_SCENE,true);
+				de.contentString=data.@title;
+				dispatchEvent(de);
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="10" y="10" text="{data.@title}" fontFamily="Times New Roman" fontSize="16" fontWeight="bold"/>
+	<mx:Label text="{data.@startTime}" bottom="47" right="10" top="13"/>
+	<mx:Button label="进入场景" icon="@Embed(source='../../img/favourites_us.png')" id="btn_enterScene" click="enterScene();" right="10" bottom="10"/>
+	<mx:Button label="显示信息" icon="@Embed(source='../../img/doc_us.png')" id="btn_showInfo" right="130" click="getInfo();" bottom="10"/>
+</mx:Canvas>

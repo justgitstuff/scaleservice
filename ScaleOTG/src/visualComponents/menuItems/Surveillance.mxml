@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" height="100" styleName="MenuPanel" title="家庭监视" horizontalAlign="left">
+	<mx:VBox height="100%">
+		<mx:RadioButtonGroup id="SurveillanceCamera"/>
+		<mx:RadioButton label="CCR探头" groupName="SurveillanceCamera"/>
+		<mx:RadioButton label="Wifi探头" groupName="SurveillanceCamera"/>
+	</mx:VBox>
+	<mx:Button label="打开监视窗口" height="100%"/>
+	
+</mx:Panel>

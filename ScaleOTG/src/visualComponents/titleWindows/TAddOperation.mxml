@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加自动操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();" height="300">
+	<mx:Script>
+		<![CDATA[
+			import lib.communicator.download.AllOperations;
+			import mx.managers.PopUpManager;
+			import lib.communicator.operation.AddOperation;
+			import lib.events.HSListEvent;
+			import lib.communicator.download.AllTarget;
+			import lib.communicator.download.AllCommand;
+			import lib.communicator.download.AllDataType;
+			private var allDataType:AllDataType;
+			private var allCommand:AllCommand;
+			private var allTarget:AllTarget;
+			public var dID:uint;
+			public var dOrder:uint;
+			public var cID:String;
+			public var tID:String;
+			public function centerWindow():void
+	        {
+	        	PopUpManager.centerPopUp(this);
+	        }
+	        
+	        public function closeWindow():void
+	        {
+	        	PopUpManager.removePopUp(this);
+	        }
+	        
+	        private function init():void
+	        {
+	        	allDataType=new AllDataType();
+				allDataType.addEventListener(HSListEvent.LIST_SUCCESS,onDataTypeLoaded);
+				allDataType.sendHS();
+				allCommand=new AllCommand();
+				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
+				allCommand.sendHS();
+				allTarget=new AllTarget();
+				allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
+				allTarget.sendHS();
+	        }
+	        private function onDataTypeLoaded(e:Event=null):void
+			{
+				ipt_dataType.dataProvider=allDataType.recordList;
+				ipt_dataType.selectedIndex=dOrder;
+			}
+			private function onCommandLoaded(e:Event=null):void
+			{
+				ipt_cmd.dataProvider=allCommand.recordList;
+			}
+			private function onTargetLoaded(e:Event=null):void
+			{
+				ipt_target.dataProvider=allTarget.recordList;
+			}
+			private function onAdd(e:Event=null):void
+			{
+				var oc:AddOperation=new AddOperation();
+				oc.lAddrID=ipt_target.selectedItem.@lAddrID;
+				oc.commandID=ipt_cmd.selectedItem.@commandID;
+				oc.sensorDataTypeID=ipt_dataType.selectedItem.@sensorDataTypeID;
+				oc.inc=ipt_over.selected?0:1;
+				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
+				oc.sendHS();
+			}
+			private function onAddSuccess(e:Event=null):void
+			{
+				var allOperation:AllOperations=AllOperations.getInstance();
+				allOperation.sendHS();
+				closeWindow();
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="0" y="0" text="自动操作设置" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label y="80" text="当" fontSize="12" fontFamily="Times New Roman" fontWeight="bold" left="60"/>
+	<mx:ComboBox left="88" right="145" y="77" id="ipt_dataType" labelField="@typeName"></mx:ComboBox>
+	<mx:RadioButton y="61" label="超过最大值" groupName="trig" right="51" id="ipt_over" selected="true"/>
+	<mx:RadioButton y="93" label="低于最小值" groupName="trig" right="51" id="ipt_below"/>
+	<mx:Label y="80" text="时" fontWeight="bold" fontFamily="Times New Roman" right="23"/>
+	<mx:Label x="10" y="33" text="触发条件：" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label x="10" y="144" text="采取措施：" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:ComboBox y="173" left="60" width="160" id="ipt_cmd" labelField="@commandDescription"></mx:ComboBox>
+	<mx:ComboBox y="173" right="10" left="228" id="ipt_target" labelField="@targetDescription"></mx:ComboBox>
+	<mx:Button label="保存" icon="@Embed(source='../../img/save.png')" bottom="10" right="10" click="onAdd();"/>
+	
+</mx:TitleWindow>

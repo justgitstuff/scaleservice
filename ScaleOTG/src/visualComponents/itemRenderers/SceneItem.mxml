@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="240" height="80" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Image left="10" top="10" autoLoad="true" scaleContent="true" width="70" source="img/favourites.png" bottom="0"/>
+	<mx:Label text="{data.@sceneName}" fontSize="16" right="0" top="10" left="90" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label x="88" y="43" text="{data.@keyWord}"/>
+</mx:Canvas>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" fontSize="12" creationComplete="init();">
+<mx:Script>
+	<![CDATA[
+		import mx.events.CloseEvent;
+		import lib.command.Appcmd;
+		import lib.communicator.operation.DelOperation;
+		import lib.communicator.operation.EditOperation;
+		import lib.events.HSListEvent;
+		import mx.controls.Alert;
+		import lib.communicator.download.AllTarget;
+		import lib.communicator.download.AllCommand;
+		import lib.communicator.download.AllDataType;
+		import lib.communicator.download.AllOperations;
+		private var allDataType:AllDataType;
+		private var allCommand:AllCommand;
+		private var allTarget:AllTarget;
+		public var dID:uint;
+		public var cID:String;
+		public var tID:String;
+		private var invoker:Appcmd;
+		private function init():void
+		{
+			invoker=Appcmd.getInstance();
+			allDataType=new AllDataType();
+			allDataType.addEventListener(HSListEvent.LIST_SUCCESS,onDataTypeLoaded);
+			allDataType.sendHS();
+			allCommand=new AllCommand();
+			allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
+			allCommand.sendHS();
+			allTarget=new AllTarget();
+			allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
+			allTarget.sendHS();
+		}
+		private function onDataTypeLoaded(e:Event=null):void
+		{
+			ipt_dataType.dataProvider=allDataType.recordList;
+		}
+		private function onCommandLoaded(e:Event=null):void
+		{
+			ipt_cmd.dataProvider=allCommand.recordList;
+		}
+		private function onTargetLoaded(e:Event=null):void
+		{
+			ipt_target.dataProvider=allTarget.recordList;
+		}
+		public function refreshSetting(e:Event=null):void
+		{
+			ipt_dataType.selectedIndex=Number(allDataType.recordXML.row.(@sensorDataTypeID==dID).@order);
+			ipt_cmd.selectedIndex=Number(allCommand.recordXML.row.(@commandID==cID).@order);
+			ipt_target.selectedIndex=Number(allTarget.recordXML.row.(@lAddrID==tID).@order);
+		}
+		private function onEdit(e:Event=null):void
+		{
+			var oc:EditOperation=new EditOperation();
+			oc.lAddrID=tID;
+			oc.commandID=cID;
+			oc.sensorDataTypeID=ipt_dataType.selectedItem.@sensorDataTypeID;
+			oc.inc=ipt_over.selected?0:1;
+			oc.sendHS();
+			oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onEditSuccess);
+		}
+		private function onEditSuccess(e:Event=null):void
+		{
+			var allOperation:AllOperations=AllOperations.getInstance();
+			allOperation.sendHS();
+		}
+		private function onDelete():void
+		{
+			Alert.show("确认要删除自动控制吗?","删除自动控制",Alert.YES|Alert.NO,this,onConfirmDelete,null,Alert.NO);
+		}
+		private function onConfirmDelete(e:CloseEvent):void
+		{
+			if(e.detail==Alert.YES)
+			{
+				var oc:DelOperation=new DelOperation();
+				oc.lAddrID=tID;
+				oc.commandID=cID;
+				oc.sensorDataTypeID=dID;
+				oc.sendHS();
+				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onDeleteSuccess);
+			}
+		}
+		private function onDeleteSuccess(e:Event=null):void
+		{
+			var allOperation:AllOperations=AllOperations.getInstance();
+			allOperation.sendHS();
+		}
+	]]>
+</mx:Script>
+	<mx:Label x="0" y="0" text="自动操作" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label y="80" text="当" fontSize="12" fontFamily="Times New Roman" fontWeight="bold" left="60"/>
+	<mx:ComboBox left="88" right="145" y="77" id="ipt_dataType" labelField="@typeName" enabled="false"></mx:ComboBox>
+	<mx:RadioButtonGroup id="trig"/>
+	<mx:RadioButton y="61" label="超过最大值" groupName="trig" right="51" id="ipt_over" selected="true" enabled="false"/>
+	<mx:RadioButton y="93" label="低于最小值" groupName="trig" right="51" id="ipt_below" enabled="false"/>
+	<mx:Label y="80" text="时" fontWeight="bold" fontFamily="Times New Roman" right="23"/>
+	<mx:Label x="10" y="33" text="触发条件：" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label x="10" y="144" text="采取措施：" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:ComboBox y="173" left="60" width="160" id="ipt_cmd" labelField="@commandDescription" enabled="false"></mx:ComboBox>
+	<mx:ComboBox y="173" right="10" left="228" id="ipt_target" labelField="@targetDescription" enabled="false"></mx:ComboBox>
+	<mx:Button label="添加" icon="@Embed(source='../../img/add.png')" bottom="10" left="10" click="invoker.showAddOperation.execute();" id="btn_add" enabled="true"/>
+	<mx:Button label="删除" icon="@Embed(source='../../img/delete.png')" bottom="10" left="104" click="onDelete();" id="btn_delete" enabled="false"/>
+	<mx:Button label="保存" icon="@Embed(source='../../img/save.png')" bottom="10" right="10" click="onEdit();" id="btn_save" enabled="false"/>
+</mx:Canvas>
