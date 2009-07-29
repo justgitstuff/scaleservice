@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="240" height="80" creationComplete="init();" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Image left="10" top="10" autoLoad="true" scaleContent="true" width="70" source="img/AutoCtrl.png" bottom="0"/>
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var incDescription:String;
+			private function init():void
+			{
+				if(Number(data.@inc))
+					incDescription="提高";
+				else
+					incDescription="降低";
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Label text="{'自动'+data.@commandDescription+data.@targetDescription}" fontSize="12" right="0" top="10" left="90"/>
+	<mx:Label y="29" text="{'以'+incDescription+data.@typeName}" fontSize="12" left="90" right="0"/>
+</mx:Canvas>

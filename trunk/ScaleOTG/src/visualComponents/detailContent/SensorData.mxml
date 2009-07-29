@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" fontSize="12">
+	<mx:Script>
+		<![CDATA[
+			import lib.communicator.download.AllDataType;
+			import lib.command.ShowAddOperation;
+			import lib.command.ShowEditSensor;
+			import lib.command.ShowEditSensorDataType;
+			import lib.command.Appcmd;
+			import lib.communicator.download.FilledDataType;
+			private var sDTID:uint;
+			private var invoker:Appcmd;
+			public function set sensorDataTypeID(value:uint):void
+			{
+				sDTID=value;
+				invoker=Appcmd.getInstance();
+				var sdp:FilledDataType=FilledDataType.getInstance();
+				var sID:uint=Number(sdp.recordXML.row.(@sensorDataTypeID==sDTID).@sensorID);
+				var allSensorDataType:AllDataType=AllDataType.getInstance();
+				var sOrder:uint=Number(allSensorDataType.recordXML.row.(@sensorDataTypeID==sDTID).@order);
+				typeName.text=sdp.recordXML.row.(@sensorDataTypeID==sDTID).@typeName;
+				invoker.showEditSensorDataType=new ShowEditSensorDataType(sDTID);
+				invoker.showEditSensor=new ShowEditSensor(sID);
+				invoker.showAddOperation=new ShowAddOperation(sOrder);
+			} 
+		]]>
+	</mx:Script>
+	<mx:Label text="数据类型" fontFamily="Times New Roman" fontWeight="bold" fontSize="16" id="typeName"/>
+	<mx:HBox width="100%" horizontalAlign="right">
+		<mx:DataGrid width="100%" height="100%" id="sensorDataGrid">
+			<mx:columns>
+				<mx:DataGridColumn headerText="获取时间" dataField="@aTime"/>
+				<mx:DataGridColumn headerText="数值" dataField="@value"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<mx:VBox height="100%">
+			<mx:Button label="设置自动控制..." width="100%" click="invoker.showAddOperation.execute();" id="btn_operation" enabled="false"/>
+			<mx:Button label="修改数据类型..." width="100%" click="invoker.showEditSensorDataType.execute();" enabled="false" id="btn_dataType"/>
+			<mx:Button label="查看传感器信息..." width="100%" click="invoker.showEditSensor.execute();" enabled="false" id="btn_sensor"/>
+		</mx:VBox>
+	</mx:HBox>
+	<mx:LineChart id="sensorDataChart" width="100%" height="60%">
+		<mx:horizontalAxis>
+		         <mx:CategoryAxis id="sensorDataChartH" categoryField="@aTime"/>
+		      </mx:horizontalAxis>
+	       <mx:series>
+	          <mx:LineSeries id="sensorDataChartV" yField="@value" displayName="value"/>
+	       </mx:series>
+	</mx:LineChart>
+	
+</mx:VBox>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="360" height="80" creationComplete="init();" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" fontSize="12">
+	<mx:Image left="10" top="10" autoLoad="true" scaleContent="true" width="70" bottom="0" source="img/info.png"/>
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var incDescription:String;
+			private function init():void
+			{
+				
+			}
+		]]>
+	</mx:Script>
+	<mx:Label text="{data.title}" fontSize="16" right="0" top="10" left="90" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label y="43" text="{data.pubDate}" fontSize="12" left="88" right="2"/>
+	<mx:LinkButton label="详情..." right="10" bottom="15">
+		<mx:click>navigateToURL(new URLRequest(data.link),'_blank');</mx:click>
+	</mx:LinkButton>
+</mx:Canvas>

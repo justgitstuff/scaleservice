@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
+	
+	<mx:Script>
+		<![CDATA[
+			import lib.events.ItemRendererEvent;
+			private function showDataTypeDetail(e:Event=null):void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.DELETE_ROW,true);
+				de.contentID=Number(data.@scID);
+				dispatchEvent(de);
+			}
+		]]>
+	</mx:Script>
+	<mx:Metadata>
+		[Event(name="showDetail", type="lib.events.ItemRendererEvent")]
+	</mx:Metadata>
+	<mx:LinkButton x="0" y="0" label="删除" click="showDataTypeDetail();"/>
+</mx:HBox>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();">
+	<mx:Script>
+		<![CDATA[
+			import lib.communicator.download.AllSceneControl;
+			import lib.communicator.operation.AddSceneControl;
+			import lib.communicator.operation.AddScene;
+			import lib.communicator.download.AllOperations;
+			import mx.managers.PopUpManager;
+			import lib.events.HSListEvent;
+			import lib.communicator.download.AllTarget;
+			import lib.communicator.download.AllCommand;
+			private var allCommand:AllCommand;
+			private var allTarget:AllTarget;
+			public var sceneID:uint;
+			public function centerWindow():void
+	        {
+	        	PopUpManager.centerPopUp(this);
+	        }
+	        
+	        public function closeWindow():void
+	        {
+	        	PopUpManager.removePopUp(this);
+	        }
+	        
+	        private function init():void
+	        {
+				allCommand=new AllCommand();
+				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
+				allCommand.sendHS();
+				allTarget=new AllTarget();
+				allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
+				allTarget.sendHS();
+				
+	        }
+			private function onCommandLoaded(e:Event=null):void
+			{
+				ipt_cmd.dataProvider=allCommand.recordList;
+			}
+			private function onTargetLoaded(e:Event=null):void
+			{
+				ipt_target.dataProvider=allTarget.recordList;
+			}
+			private function onAdd(e:Event=null):void
+			{
+				var oc:AddSceneControl=new AddSceneControl();
+				oc.lAddrID=ipt_target.selectedItem.@lAddrID;
+				oc.commandID=ipt_cmd.selectedItem.@commandID;
+				oc.sceneID=this.sceneID;
+				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
+				oc.sendHS();
+			}
+			private function onAddSuccess(e:Event=null):void
+			{
+				var ao:AllSceneControl=AllSceneControl.getInstance();
+				ao.sendHS();
+				closeWindow();
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="0" y="0" text="操作设置" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label x="10" y="33" text="操作名称:" fontWeight="normal"/>
+	<mx:ComboBox y="30" left="74" width="160" id="ipt_cmd" labelField="@commandDescription"></mx:ComboBox>
+	<mx:ComboBox y="63" left="74" id="ipt_target" labelField="@targetDescription" width="160"></mx:ComboBox>
+	<mx:Button label="添加" icon="@Embed(source='../../img/yes.png')" click="onAdd();" x="92" y="95"/>
+	<mx:Label x="10" y="66" text="操作对象:"/>
+	<mx:Button x="186" y="95" label="关闭" icon="@Embed(source='../../img/no.png')" click="closeWindow();"/>
+	
+</mx:TitleWindow>

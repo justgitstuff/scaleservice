@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="关联操作设置" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();" height="400" width="422">
+	<mx:Script>
+		<![CDATA[
+			import lib.communicator.operation.DeleteAssociation;
+			import mx.events.ItemClickEvent;
+			import lib.communicator.operation.AddAssociation;
+			import lib.communicator.download.AllTarget;
+			import lib.communicator.download.AllCommand;
+			import lib.events.HSListEvent;
+			import lib.events.ItemRendererEvent;
+			import lib.communicator.download.LCAssociation;
+			import mx.managers.PopUpManager;
+			private var lca:LCAssociation;
+			private var allCommand:AllCommand;
+			private var allTarget:AllTarget;
+			public function centerWindow():void
+	        {
+	        	PopUpManager.centerPopUp(this);
+	        }
+	        
+	        public function closeWindow():void
+	        {
+	        	PopUpManager.removePopUp(this);
+	        }
+	        
+	        private function init():void
+	        {
+	        	allCommand=new AllCommand();
+				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
+				allCommand.sendHS();
+				allTarget=new AllTarget();
+				allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
+				allTarget.sendHS();
+				ipt_lc2.addEventListener(ItemRendererEvent.DELETE_ROW,onDelete);
+	        }
+	        private function onCommandLoaded(e:Event=null):void
+			{
+				ipt_c1.dataProvider=allCommand.recordList;
+				ipt_c2.dataProvider=allCommand.recordList;
+			}
+			private function onTargetLoaded(e:Event=null):void
+			{
+				ipt_l1.dataProvider=allTarget.recordList;
+				ipt_l2.dataProvider=allTarget.recordList;
+			}
+			private function loadLC(e:Event=null):void
+			{
+				if(ipt_l1.selectedItem!=null && ipt_c1.selectedItem!=null)
+				{
+					lca=LCAssociation.getInstance();
+					lca.lAddrID_1=ipt_l1.selectedItem.@lAddrID;
+					lca.commandID_1=ipt_c1.selectedItem.@commandID;
+					lca.addEventListener(HSListEvent.LIST_SUCCESS,onLCLoaded);
+					lca.sendHS();
+				}
+			}
+			private function onLCLoaded(e:Event=null):void
+			{
+				ipt_lc2.dataProvider=lca.recordList;
+			}
+			private function onAdd():void
+			{
+				if(ipt_l1.selectedItem!=null && ipt_c1.selectedItem!=null && ipt_l2.selectedItem!=null && ipt_c2.selectedItem!=null)
+				{
+					var ads:AddAssociation=new AddAssociation();
+					ads.lAddrID_1=ipt_l1.selectedItem.@lAddrID;
+					ads.lAddrID_2=ipt_l2.selectedItem.@lAddrID;
+					ads.commandID_1=ipt_c1.selectedItem.@commandID;
+					ads.commandID_2=ipt_c2.selectedItem.@commandID;
+					ads.addEventListener(HSListEvent.OPERATION_SUCCESS,loadLC);
+					ads.sendHS();
+				}
+			}
+			private function onDelete(e:ItemRendererEvent):void
+			{
+				var das:DeleteAssociation=new DeleteAssociation();
+				das.associationID=e.contentID;
+				das.addEventListener(HSListEvent.LIST_SUCCESS,loadLC);
+				das.sendHS();
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="0" y="0" text="所有关联操作" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:ComboBox id="ipt_l1" labelField="@targetDescription" change="loadLC();" left="37" top="30" width="160"></mx:ComboBox>
+	<mx:Label x="10" y="33" text="当"/>
+	<mx:ComboBox id="ipt_c1" labelField="@commandDescription" change="loadLC();" right="37" top="30" width="160"></mx:ComboBox>
+	<mx:Label x="373" y="33" text="时"/>
+	<mx:Label x="10" y="62" text="必须"/>
+	<mx:DataGrid x="10" y="91" width="382" height="211" id="ipt_lc2">
+		<mx:columns>
+			<mx:DataGridColumn headerText="操作名" dataField="@commandDescription"/>
+			<mx:DataGridColumn headerText="目标名" dataField="@targetDescription"/>
+			<mx:DataGridColumn headerText="" itemRenderer="visualComponents.itemRenderers.AssociationOperations"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Button x="306" y="310" label="添加" icon="@Embed(source='../../img/add.png')" click="onAdd();"/>
+	<mx:ComboBox y="322" id="ipt_c2" labelField="@commandDescription" left="10" width="115"></mx:ComboBox>
+	<mx:ComboBox y="322" id="ipt_l2" labelField="@targetDescription" left="133" width="165"></mx:ComboBox>
+	
+</mx:TitleWindow>

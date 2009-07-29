@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" height="100" styleName="MenuPanel" title="信息订阅">
+	<mx:Button label="订阅新内容..."/>
+	<mx:Button label="查看订阅..." width="100%"/>
+	
+</mx:Panel>

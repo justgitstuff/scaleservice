@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" fontSize="12">
+	<mx:Script>
+		<![CDATA[
+			import lib.events.HSListEvent;
+			import lib.communicator.operation.AddManual;
+			public var controlTargetID:String;
+			private function onExecute():void
+			{
+				var am:AddManual=new AddManual();
+				am.lAddrID=controlTargetID;
+				am.commandID=cmdList.selectedItem.@commandID;
+				am.sendHS();
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Button label="执行" click="onExecute();" icon="@Embed(source='../../img/yes.png')" bottom="10" horizontalCenter="0"/>
+	<mx:Label x="10" y="10" text="可用操作"/>
+	<mx:DataGrid right="10" left="10" top="36" bottom="55" id="cmdList" editable="true">
+		<mx:columns>
+			<mx:DataGridColumn headerText="命令描述" dataField="@commandDescription" editable="false"/>
+			<mx:DataGridColumn headerText="参数"  itemEditor="mx.controls.TextInput"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+</mx:Canvas>

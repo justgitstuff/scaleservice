@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" height="100" styleName="MenuPanel" title="Zigbee网络配置" horizontalAlign="left">
+	<mx:VBox height="100%">
+		<mx:Label text="网络地址"/>
+		<mx:ComboBox></mx:ComboBox>
+	</mx:VBox>
+		
+</mx:Panel>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" height="100" styleName="MenuPanel" title="快速访问" horizontalAlign="left">
+	<mx:Button label="添加传感器" width="90" height="100%"/>
+	<mx:VBox height="100%">
+		<mx:Button label="留言板" width="100%" height="50%"/>
+		<mx:Button label="状态总览" height="50%"/>
+	</mx:VBox>
+	
+</mx:Panel>

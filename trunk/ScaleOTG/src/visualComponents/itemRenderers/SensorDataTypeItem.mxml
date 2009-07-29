@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="240" height="80" creationComplete="init();" verticalScrollPolicy="off" horizontalScrollPolicy="off" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%">
+	<mx:states>
+		<mx:State name="outOfRange">
+			<mx:SetStyle target="{cv}" name="color" value="#FF0000"/>
+			<mx:SetStyle target="{label1}" name="color" value="#FF0000"/>
+			<mx:RemoveChild target="{label2}"/>
+			<mx:RemoveChild target="{label3}"/>
+			<mx:SetProperty target="{cv}" name="width" value="105"/>
+			<mx:AddChild position="lastChild">
+				<mx:LinkButton label="自动控制..." bottom="2" right="2" left="154" click="showAddOperation();"/>
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+	<mx:Image left="10" top="10" source="img/SensorDataType.png"/>
+	<mx:Label color="#BABABA" right="2" bottom="2" text="{data.@aTime}" id="label2" height="18"/>
+	<mx:Label text="{data.@location}" color="#BABABA" left="90" id="label3" width="49" bottom="2" height="18"/>
+	<mx:Script>
+		<![CDATA[
+			import lib.command.ShowAddOperation;
+			import lib.events.ItemRendererEvent;
+			import lib.communicator.download.AllDataType;
+			import lib.command.Appcmd;
+			import lib.command.ShowEditSensorDataType;
+			private function init():void
+			{
+				if(Number(data.@value)>Number(data.@maxCustom) || Number(data.@value)<Number(data.@minCustom))
+				{
+					this.currentState="outOfRange";
+				}
+			}
+			private function showDataTypeDetail(e:Event=null):void
+			{
+	        	var invoker:Appcmd=Appcmd.getInstance();
+	        	invoker.showEditSensorDataType=new ShowEditSensorDataType(Number(data.@sensorDataTypeID));
+	        	invoker.showEditSensorDataType.execute();
+			}
+			private function showAddOperation():void
+			{
+				var sDTID:uint=Number(data.@sensorDataTypeID);
+				var allSensorDataType:AllDataType=AllDataType.getInstance();
+				var sOrder:uint=Number(allSensorDataType.recordXML.row.(@sensorDataTypeID==sDTID).@order);
+				var invoker:Appcmd=Appcmd.getInstance();
+				invoker.showAddOperation=new ShowAddOperation(sOrder);
+				invoker.showAddOperation.execute();
+			}
+		]]>
+	</mx:Script>
+	<mx:Metadata>
+		[Event(name="showDetail", type="lib.events.ItemRendererEvent")]
+	</mx:Metadata>
+	<mx:Label text="{data.@value}" id="cv" textAlign="right" fontSize="12" top="35" left="90" right="47"/>
+	<mx:Label text="{data.@unit}" width="47" id="label1" fontSize="12" right="2" top="35"/>
+	<mx:LinkButton label="{data.@typeName}" fontSize="14" click="showDataTypeDetail();" right="2" top="2" left="90"/>
+</mx:Canvas>

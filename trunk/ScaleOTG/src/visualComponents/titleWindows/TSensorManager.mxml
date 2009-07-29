@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" height="400" title="传感器管理" showCloseButton="true" close="closeWindow();" 
+	 creationComplete="centerWindow();init();" width="540">
+	<mx:Script>
+		<![CDATA[
+		import lib.communicator.operation.UnregSensor;
+		import lib.communicator.operation.RegSensor;
+		import lib.command.ShowEditSensor;
+		import lib.command.Appcmd;
+		import lib.events.HSListEvent;
+		import lib.communicator.download.AllLaddr;
+		import mx.managers.PopUpManager;
+		import lib.communicator.operation.EditSensor;
+		import lib.events.ItemRendererEvent;
+		private var dSensor:AllLaddr;
+		public function centerWindow():void
+        {
+        	PopUpManager.centerPopUp(this);
+        }
+        
+        public function closeWindow():void
+        {
+        	PopUpManager.removePopUp(this);
+        }
+        
+        private function init():void
+        {
+        	dSensor=AllLaddr.getInstance();
+        	dSensor.addEventListener(HSListEvent.LIST_SUCCESS,loadSensorList);
+        	dSensor.sendHS();
+        	sensorList.addEventListener(ItemRendererEvent.SHOW_DETAIL,showSensorDetail);
+        	sensorList.addEventListener(ItemRendererEvent.REG_SENSOR,regSensor);
+        	sensorList.addEventListener(ItemRendererEvent.UNREG_SENSOR,unregSensor);
+        }
+        private function loadSensorList(e:HSListEvent):void
+        {
+        	sensorList.dataProvider=dSensor.recordList;
+        }
+        private function showSensorDetail(e:ItemRendererEvent):void
+        {
+        	var invoker:Appcmd=Appcmd.getInstance();
+        	invoker.showEditSensor=new ShowEditSensor(e.contentID);
+        	invoker.showEditSensor.execute();	
+        }
+        private function regSensor(e:ItemRendererEvent):void
+        {
+        	var cServ:RegSensor=new RegSensor();
+        	cServ.lAddr=e.contentString;
+        	cServ.addEventListener(HSListEvent.LIST_SUCCESS,onRefresh);
+        	cServ.sendHS();
+        }
+        private function unregSensor(e:ItemRendererEvent):void
+        {
+        	var cServ:UnregSensor=new UnregSensor();
+        	cServ.lAddr=e.contentString;
+        	cServ.sendHS();
+        }
+        private function onRefresh(e:Event=null):void
+        {
+        	dSensor.sendHS();
+        }
+		]]>
+	</mx:Script>
+	<mx:List id="sensorList" x="10" y="11" width="500" height="291" cachePolicy="on" itemRenderer="visualComponents.itemRenderers.SensorItem"></mx:List>
+	<mx:Button x="330" y="310" label="刷新" icon="@Embed(source='../../img/refresh.png')" click="onRefresh();"/>
+	<mx:Button x="424" y="310" label="关闭" icon="@Embed(source='../../img/yes.png')" click="closeWindow();"/>
+</mx:TitleWindow>

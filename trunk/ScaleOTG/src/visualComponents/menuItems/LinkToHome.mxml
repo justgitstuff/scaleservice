@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" height="100" styleName="MenuPanel" title="连接" horizontalAlign="right">
+	<mx:ProgressBar width="100%" label="已连接" height="25"/>
+	<mx:HBox width="100%" horizontalAlign="right">
+		<mx:Button label="连接..." width="65"/>
+		<mx:Button label="断开" width="65"/>
+	</mx:HBox>
+</mx:Panel>

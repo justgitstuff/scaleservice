@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="460" height="80" creationComplete="init();" verticalScrollPolicy="off" horizontalScrollPolicy="off" backgroundImage="@Embed(source='../../img/optionBG.png')" backgroundSize="100%" fontSize="12">
+	<mx:Image source="img/sensor.png" left="10" top="10" width="70" height="70"/>
+	<mx:Script>
+		<![CDATA[
+			import lib.events.ItemRendererEvent;
+			private function init():void
+			{
+					
+			}
+			private function showSensorDetail():void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.SHOW_DETAIL,true);
+				de.contentID=Number(data.@sensorID);
+				dispatchEvent(de);
+			}
+			private function regSensor():void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.REG_SENSOR,true);
+				de.contentString=data.@lAddrID;
+				dispatchEvent(de);
+			}
+			private function unregSensor():void
+			{
+				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.UNREG_SENSOR,true);
+				de.contentString=data.@lAddrID;
+				dispatchEvent(de);
+			}
+			private function switchJoin():void
+			{
+				if(data.@sensorID=='')
+				{
+					regSensor();
+				}
+				else
+				{
+					unregSensor();
+					data.@sensorID='';
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Metadata>
+		[Event(name="showDetail", type="lib.events.ItemRendererEvent")]
+	</mx:Metadata>
+	<mx:Move id="eSbtnMove"/>
+	<mx:Label x="88" y="46" text="{data.@lAddrID}" fontSize="18" id="label1" fontFamily="Times New Roman" fontWeight="normal"/>
+	<mx:Label x="88" y="12" text="传感器序列号：" fontSize="18" id="label0" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Button id="btn_join" label="配置..." enabled="{data.@sensorID!=''}" click="showSensorDetail();" icon="@Embed(source='../../img/customize_us.png')" right="10" bottom="36"/>
+	<mx:CheckBox x="386" y="45" label="已入网" selected="{data.@sensorID!=''}" fontSize="12" change="switchJoin();"/>
+	<mx:Image x="10" y="5" source="img/new.png" visible="{data.@sensorID==''}"/>
+</mx:Canvas>
