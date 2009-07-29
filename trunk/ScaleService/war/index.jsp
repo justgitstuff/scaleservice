@@ -149,6 +149,98 @@
   </p>
 </form></td>
   </tr>
+  
+  <tr>
+    <td class="LayoutTable"><form name="form4" method="post" action="/add_device">
+  <p><strong>添加设备</strong>  </p>
+  <p>
+    <label>设备标识
+      <input type="text" name="deviceTag" id="deviceTag">
+    </label>
+  </p>
+  <p>
+    <label>设备介绍
+      <input type="text" name="intro" id="intro">
+    </label>
+  </p>
+  <p>
+    <input type="submit" name="button4" id="button4" value="添加">
+  </p>
+</form></td>
+    <td class="LayoutTable"><form name="form4" method="get" action="/view_device">
+  <p><strong>查看设备</strong>  </p>
+  
+  <p>
+    <input type="submit" name="button4" id="button4" value="查看">
+  </p>
+</form></td>
+  </tr>
+  <tr>
+    <td class="LayoutTable"><form name="form4" method="post" action="/add_device">
+  <p><strong>添加设备</strong>  </p>
+  <p>
+    <label>设备标识
+      <input type="text" name="deviceTag" id="deviceTag">
+    </label>
+  </p>
+  <p>
+    <label>设备介绍
+      <input type="text" name="intro" id="intro">
+    </label>
+  </p>
+  <p>
+    <input type="submit" name="button4" id="button4" value="添加">
+  </p>
+</form></td>
+    <td class="LayoutTable"><form name="form4" method="get" action="/view_device">
+  <p><strong>查看设备</strong>  </p>
+  
+  <p>
+    <input type="submit" name="button4" id="button4" value="查看">
+  </p>
+</form></td>
+  </tr>
+  <tr>
+  	<td class="LayoutTable"><form name="form4" method="post" action="/add_control">
+  <p><strong>添加命令</strong>  </p>
+  <p>
+    <label>设备标识
+      <input type="text" name="deviceTag" id="deviceTag">
+    </label>
+  </p>
+  <p>
+    <label>命令内容
+      <input type="text" name="command" id="command">
+    </label>
+  </p>
+  <p>
+    <label>命令参数
+      <input type="text" name="parameter" id="parameter">
+    </label>
+  </p>
+  <p>
+    <label>命令说明
+      <input type="text" name="action" id="action">
+    </label>
+  </p>
+  
+  <p>
+    <input type="submit" name="button4" id="button4" value="添加">
+  </p>
+</form></td>
+    <td class="LayoutTable"><form name="form4" method="get" action="/view_control">
+  <p><strong>查看命令</strong>  </p>
+  <p>
+    <label>设备标识
+      <input type="text" name="deviceTag" id="deviceTag">
+    </label>
+  </p>
+  
+  <p>
+    <input type="submit" name="button4" id="button4" value="查看">
+  </p>
+</form></td>
+  </tr>
 </table>
 <p>&nbsp;</p>
 </body>

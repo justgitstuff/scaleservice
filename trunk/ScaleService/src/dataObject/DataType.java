@@ -22,7 +22,6 @@ import com.google.appengine.api.datastore.Key;
 
 import exception.DataTypeException;
 import factory.PMF;
-import factory.SensorDataFactory;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class DataType
@@ -53,58 +52,7 @@ public class DataType
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		pm.close();
 	}
-	@SuppressWarnings("unchecked")
-	public static Element getDataTypeListXML()
-	{
-		DocumentBuilder db;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Sensor.class);
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("sensors");
-		try
-		{
-			List<DataType> results = (List<DataType>) query.execute();
-			if (results.iterator().hasNext())
-			{
-				for (DataType e : results)
-				{
-					Element dataTypeItem=XMLDoc.createElement("row");
-
-					Element unit=XMLDoc.createElement("unit");
-					unit.appendChild(XMLDoc.createTextNode(e.getUnit()));
-					
-					Element typeName=XMLDoc.createElement("typeName");
-					typeName.appendChild(XMLDoc.createTextNode(e.getTypeName()));
-					
-					Element maxCustom=XMLDoc.createElement("maxCustom");
-					maxCustom.appendChild(XMLDoc.createTextNode(e.getMaxCustom()));
-					
-					Element minCustom=XMLDoc.createElement("minCustom");
-					minCustom.appendChild(XMLDoc.createTextNode(e.getMinCustom()));
-					
-					dataTypeItem.appendChild(unit);
-					dataTypeItem.appendChild(typeName);
-					dataTypeItem.appendChild(maxCustom);
-					dataTypeItem.appendChild(minCustom);
-					root.appendChild(dataTypeItem);
-				}
-			}
-		}
-		finally
-		{
-			pm.close();
-		}
-		return root;
-	}
+	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key dataTypeID;
@@ -134,9 +82,9 @@ public class DataType
 		this.minCustom = minCustom;
 		this.sensorData=new ArrayList<SensorData>();
 	}
-	public void addSensorData(double value)
+	public void addSensorData(SensorData sensorData)
 	{
-		this.sensorData.add(SensorDataFactory.get().newSensorData(value));
+		this.sensorData.add(sensorData);
 	}
 	public Element getSensorDataListXML()
 	{

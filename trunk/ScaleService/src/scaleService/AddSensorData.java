@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import dataObject.DataType;
 import exception.DataTypeException;
+import factory.SensorDataFactory;
 
 public class AddSensorData extends HttpServlet
 {
@@ -41,7 +42,7 @@ public class AddSensorData extends HttpServlet
 		}
 		else
 		{
-			targetDataType.addSensorData(value);
+			targetDataType.addSensorData(SensorDataFactory.get().newSensorData(value));
 			DataType.save();
 			resp.sendRedirect("/index.jsp");
 		}
