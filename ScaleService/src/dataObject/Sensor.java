@@ -1,6 +1,7 @@
 package dataObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -19,8 +20,8 @@ import org.w3c.dom.Element;
 
 import com.google.appengine.api.datastore.Key;
 
+import exception.SensorException;
 import factory.PMF;
-import factory.SensorDataFactory;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Sensor
@@ -28,22 +29,31 @@ public class Sensor
 	@SuppressWarnings("unchecked")
 	public static Sensor getSensor(String sensorTag)
 	{
+		Sensor returnSensor=null;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Sensor.class);
 		query.setFilter("sensorTag == st");
 		query.declareParameters("String st");
-		List<Sensor> results = (List<Sensor>) query.execute(sensorTag);
-		if (results.iterator().hasNext())
+		try
 		{
-			return results.iterator().next();
-		}
-		else
+			List<Sensor> results = (List<Sensor>) query.execute(sensorTag);
+			if (results.iterator().hasNext())
+			{
+				returnSensor = results.iterator().next();
+			}
+		}finally
 		{
-			return null;
+			//noting to do
 		}
+		return returnSensor;
+	}
+	public static void save()
+	{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		pm.close();
 	}
 	@SuppressWarnings("unchecked")
-	public static Element getSensorXML()
+	public static Element getSensorListXML()
 	{
 		DocumentBuilder db;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -66,7 +76,7 @@ public class Sensor
 			{
 				for (Sensor e : results)
 				{
-					Element sensorItem=XMLDoc.createElement("sensor");
+					Element sensorItem=XMLDoc.createElement("row");
 
 					Element sensorTag=XMLDoc.createElement("sensorTag");
 					sensorTag.appendChild(XMLDoc.createTextNode(e.getSensorTag()));
@@ -80,10 +90,18 @@ public class Sensor
 					Element manufacturer=XMLDoc.createElement("manufacturer");
 					manufacturer.appendChild(XMLDoc.createTextNode(e.getManufacturer()));
 					
+					Element description=XMLDoc.createElement("description");
+					description.appendChild(XMLDoc.createTextNode(e.getDescription()));
+					
+					Element memo=XMLDoc.createElement("memo");
+					memo.appendChild(XMLDoc.createTextNode(e.getMemo()));
+					
 					sensorItem.appendChild(sensorTag);
 					sensorItem.appendChild(sensorName);
 					sensorItem.appendChild(location);
 					sensorItem.appendChild(manufacturer);
+					sensorItem.appendChild(description);
+					sensorItem.appendChild(memo);
 					root.appendChild(sensorItem);
 				}
 			}
@@ -94,36 +112,122 @@ public class Sensor
 		}
 		return root;
 	}
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key sensorID;
+	@Persistent
+	private String sensorTag;
+	@Persistent
+	private String sensorName;
 	@Persistent
 	private String location;
 	@Persistent
 	private String manufacturer;
 	@Persistent
-	private List<SensorData> sensorData;
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key sensorID;
+	private String description;
 	@Persistent
-	private String sensorName;
+	private String memo;
 	@Persistent
-	private String sensorTag;
+	private List<DataType> dataType;
+	/**
+	 * @param location
+	 * @param manufacturer
+	 * @param sensorName
+	 * @param description
+	 * @param memo
+	 * @param sensorTag
+	 */
+	public Sensor(String sensorTag, String sensorName,String location, String manufacturer,
+			String description, String memo)
+	{
+		super();
+		this.location = location;
+		this.manufacturer = manufacturer;
+		this.sensorName = sensorName;
+		this.description = description;
+		this.memo = memo;
+		this.sensorTag = sensorTag;
+		this.dataType=new ArrayList<DataType>();
+	}
 	/**
 	 * @param sensorName
 	 * @param location
 	 * @param manufacturer
 	 */
-	public Sensor(String sensorTag,String sensorName, String location,
-			String manufacturer)
+	
+	public void addDataType(DataType dataType)
 	{
-		this.sensorTag=sensorTag;
-		this.sensorName = sensorName;
-		this.location = location;
-		this.manufacturer = manufacturer;
-		this.sensorData=new ArrayList<SensorData>();
+		this.dataType.add(dataType);
 	}
-	public void addSensorData(double value)
+	public Element getDataTypeListXML()
 	{
-		this.sensorData.add(SensorDataFactory.get().newSensorData(value));
+		DocumentBuilder db;
+		try
+		{
+			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		}
+		catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		Document XMLDoc=db.newDocument();
+		Element root=XMLDoc.createElement("dataType");
+		try
+		{
+			Iterator<DataType> it=dataType.iterator();
+			if (it.hasNext())
+			{
+				for (DataType e : dataType)
+				{
+					Element dataTypeItem=XMLDoc.createElement("row");
+
+					Element unit=XMLDoc.createElement("unit");
+					unit.appendChild(XMLDoc.createTextNode(e.getUnit()));
+					
+					Element typeName=XMLDoc.createElement("typeName");
+					typeName.appendChild(XMLDoc.createTextNode(e.getTypeName()));
+					
+					Element maxCustom=XMLDoc.createElement("maxCustom");
+					maxCustom.appendChild(XMLDoc.createTextNode(e.getMaxCustom()));
+					
+					Element minCustom=XMLDoc.createElement("minCustom");
+					minCustom.appendChild(XMLDoc.createTextNode(e.getMinCustom()));
+					
+					dataTypeItem.appendChild(unit);
+					dataTypeItem.appendChild(typeName);
+					dataTypeItem.appendChild(maxCustom);
+					dataTypeItem.appendChild(minCustom);
+					root.appendChild(dataTypeItem);
+				}
+			}
+		} finally
+		{
+			//do nothing
+		}
+		return root;
+	}
+	public void saveAsNew() throws SensorException
+	{
+		if(Sensor.getSensor(this.sensorTag)==null && this.sensorID==null)
+		{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			try
+			{
+				pm.makePersistent(this);
+			} finally
+			{
+				pm.close();
+			}
+		}
+		else if(Sensor.getSensor(this.sensorTag)!=null)
+		{
+			throw new SensorException("Sensor Tag Already Exist.");
+		}
+		else
+		{
+			throw new SensorException("You must leave the sensorID field as null if you are to add a new sensor.");
+		}
 	}
 	/**
 	 * @return the location
@@ -160,17 +264,19 @@ public class Sensor
 	{
 		return sensorTag;
 	}
-	public void save()
+	/**
+	 * @return the description
+	 */
+	public String getDescription()
 	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try
-		{
-			pm.makePersistent(this);
-		} 
-		finally
-		{
-			pm.close();
-		}
+		return description;
+	}
+	/**
+	 * @return the memo
+	 */
+	public String getMemo()
+	{
+		return memo;
 	}
 	/**
 	 * @param location the location to set
@@ -206,5 +312,19 @@ public class Sensor
 	public void setSensorTag(String sensorTag)
 	{
 		this.sensorTag = sensorTag;
+	}
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+	/**
+	 * @param memo the memo to set
+	 */
+	public void setMemo(String memo)
+	{
+		this.memo = memo;
 	}
 }

@@ -37,7 +37,7 @@ public class ViewSensor extends HttpServlet
 	{
 		resp.setContentType("text/html;charset=gb2312");
 		PrintWriter out=resp.getWriter();
-		Element sensors=Sensor.getSensorXML();
+		Element sensors=Sensor.getSensorListXML();
 		Transformer transformer;
 		try
 		{

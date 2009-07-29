@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dataObject.Sensor;
+import exception.SensorException;
 
 /**
  * @author ÕıÕ¨÷€
@@ -27,8 +28,16 @@ public class AddSensor extends HttpServlet
 		String sensorName = req.getParameter("sensorName");
 		String location = req.getParameter("location");
 		String manufacturer = req.getParameter("manufacturer");
-		Sensor newSensor=new Sensor(sensorTag,sensorName,location,manufacturer);
-		newSensor.save();
-		resp.sendRedirect("/addSensor.jsp");
+		String description = req.getParameter("description");
+		String memo = req.getParameter("memo");
+		Sensor newSensor=new Sensor(sensorTag,sensorName,location,manufacturer, description, memo);
+		try
+		{
+			newSensor.saveAsNew();
+		} catch (SensorException e)
+		{
+			e.printStackTrace();
+		}
+		resp.sendRedirect("/index.jsp");
 	}
 }

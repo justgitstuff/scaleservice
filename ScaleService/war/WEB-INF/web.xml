@@ -8,19 +8,53 @@
 		<servlet-name>addSensor</servlet-name>
 		<servlet-class>scaleService.AddSensor</servlet-class>
 	</servlet>
-	<servlet-mapping>
-		<servlet-name>addSensor</servlet-name>
-		<url-pattern>/add_sensor</url-pattern>
-	</servlet-mapping>
-    <servlet>
+	<servlet>
         <servlet-name>viewSensor</servlet-name>
         <servlet-class>scaleService.ViewSensor</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>addDataType</servlet-name>
+        <servlet-class>scaleService.AddDataType</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewDataType</servlet-name>
+        <servlet-class>scaleService.ViewDataType</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addSensorData</servlet-name>
+        <servlet-class>scaleService.AddSensorData</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewSensorData</servlet-name>
+        <servlet-class>scaleService.ViewSensorData</servlet-class>
+    </servlet>
+    
     <servlet-mapping>
+		<servlet-name>addSensor</servlet-name>
+		<url-pattern>/add_sensor</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
         <servlet-name>viewSensor</servlet-name>
         <url-pattern>/view_sensor</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addDataType</servlet-name>
+        <url-pattern>/add_dataType</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewDataType</servlet-name>
+        <url-pattern>/view_dataType</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addSensorData</servlet-name>
+        <url-pattern>/add_sensorData</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewSensorData</servlet-name>
+        <url-pattern>/view_sensorData</url-pattern>
+    </servlet-mapping>
+    
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>

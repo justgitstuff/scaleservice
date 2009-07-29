@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sensors><sensor><sensorTag>AB9922</sensorTag><sensorName>Humid</sensorName><location>Dining Room</location><manufacturer>TI</manufacturer></sensor><sensor><sensorTag>TI.HumidPower.20021</sensorTag><sensorName>Humid</sensorName><location>Dining Room</location><manufacturer>TI</manufacturer></sensor><sensor><sensorTag>TI.HumidPower.30021</sensorTag><sensorName>Humid</sensorName><location>Dining Room</location><manufacturer>TI</manufacturer></sensor></sensors>
