@@ -1,0 +1,20 @@
+@charset "utf-8";
+/* CSS Document */
+
+.LayoutTable {
+	vertical-align: top;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #39F;
+	border-right-color: #39F;
+	border-bottom-color: #39F;
+	border-left-color: #39F;
+}
+.LayoutTableOutter {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
