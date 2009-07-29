@@ -46,16 +46,16 @@ public class SensorData
 	/**
 	 * @return the data
 	 */
-	public double getData()
+	public double getValue()
 	{
 		return value;
 	}
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(double data)
+	public void setValue(double value)
 	{
-		this.value = data;
+		this.value = value;
 	}
 	/**
 	 * @return the time
