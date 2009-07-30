@@ -1,20 +1,4 @@
-<!-- Indices written at Thu, 30 Jul 2009 13:07:37 UTC -->
+<!-- Indices written at Thu, 30 Jul 2009 13:32:28 UTC -->
 
-<datastore-indexes>
+<datastore-indexes/>
 
-    <!-- Used 2 times in query history -->
-    <datastore-index kind="DataType" ancestor="true" source="auto">
-        <property name="dataType_INTEGER_IDX" direction="asc"/>
-    </datastore-index>
-
-    <!-- Used 2 times in query history -->
-    <datastore-index kind="SensorData" ancestor="true" source="auto">
-        <property name="sensorData_INTEGER_IDX" direction="asc"/>
-    </datastore-index>
-
-    <!-- Used 2 times in query history -->
-    <datastore-index kind="Control" ancestor="true" source="auto">
-        <property name="control_INTEGER_IDX" direction="asc"/>
-    </datastore-index>
-
-</datastore-indexes>

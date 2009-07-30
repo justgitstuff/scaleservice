@@ -103,7 +103,7 @@ public class Sensor
 		}
 		finally
 		{
-			pm.close();
+			//do nothing
 		}
 		return root;
 	}

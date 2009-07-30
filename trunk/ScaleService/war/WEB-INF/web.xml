@@ -48,6 +48,12 @@
         <servlet-name>addOperation</servlet-name>
         <servlet-class>scaleService.AddOperation</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>viewOperation</servlet-name>
+        <servlet-class>scaleService.ViewOperation</servlet-class>
+    </servlet>
+    
+    
     
     <servlet-mapping>
 		<servlet-name>addSensor</servlet-name>
@@ -92,6 +98,10 @@
     <servlet-mapping>
         <servlet-name>addOperation</servlet-name>
         <url-pattern>/add_operation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewOperation</servlet-name>
+        <url-pattern>/view_operation</url-pattern>
     </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

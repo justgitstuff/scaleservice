@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import dataObject.Sensor;
 import exception.SensorException;
+import factory.PMF;
 
 public class ViewDataType extends HttpServlet
 {
@@ -59,7 +60,7 @@ public class ViewDataType extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			//do nothing
+			PMF.saveAndClose();
 		}
 	}
 }
