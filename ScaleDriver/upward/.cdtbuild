@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?fileVersion 3.1.0?>
+<ManagedProjectBuildInfo>
+  <project id="shangxing.cdt.managedbuild.target.gnu.exe.1102316954" name="Executable (Gnu)" projectType="cdt.managedbuild.target.gnu.exe">
+    <configuration id="cdt.managedbuild.config.gnu.exe.debug.580497567" name="Debug" description="" parent="cdt.managedbuild.config.gnu.exe.debug" artifactName="shangxing" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" cleanCommand="rm -rf">
+      <toolChain superClass="cdt.managedbuild.toolchain.gnu.exe.debug" id="cdt.managedbuild.toolchain.gnu.exe.debug.317785580" name="GCC Tool Chain">
+        <tool superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.38824489" name="GCC C++ Compiler"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug" id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1457106098" name="GCC C Compiler"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug" id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1576020235" name="GCC C Linker">
+          <option superClass="gnu.c.link.option.libs" id="gnu.c.link.option.libs.425546761" valueType="libs">
+            <listOptionValue value="mysqlclient" builtIn="false"/>
+          </option>
+          <option superClass="gnu.c.link.option.paths" id="gnu.c.link.option.paths.317464375" valueType="stringList">
+            <listOptionValue value="/usr/include/mysql" builtIn="false"/>
+          </option>
+        </tool>
+        <tool superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1515855083" name="GCC C++ Linker"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug" id="cdt.managedbuild.tool.gnu.assembler.exe.debug.442495854" name="GCC Assembler"/>
+        <macros/>
+      </toolChain>
+    </configuration>
+    <configuration id="cdt.managedbuild.config.gnu.exe.release.294075828" name="Release" description="" parent="cdt.managedbuild.config.gnu.exe.release" artifactName="shangxing" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" cleanCommand="rm -rf">
+      <toolChain superClass="cdt.managedbuild.toolchain.gnu.exe.release" id="cdt.managedbuild.toolchain.gnu.exe.release.2115116455" name="GCC Tool Chain">
+        <tool superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1310207265" name="GCC C++ Compiler"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release" id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.472846811" name="GCC C Compiler"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release" id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1794920883" name="GCC C Linker"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.771945946" name="GCC C++ Linker"/>
+        <tool superClass="cdt.managedbuild.tool.gnu.assembler.exe.release" id="cdt.managedbuild.tool.gnu.assembler.exe.release.464862585" name="GCC Assembler"/>
+      </toolChain>
+    </configuration>
+  </project>
+</ManagedProjectBuildInfo>
