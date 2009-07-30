@@ -16,4 +16,8 @@ public final class PMF
 	{
 		return pmfInstance;
 	}
+	public static void saveAndClose()
+	{
+		pmfInstance.getPersistenceManager().close();
+	}
 }

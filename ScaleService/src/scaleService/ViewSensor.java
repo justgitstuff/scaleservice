@@ -13,6 +13,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -35,29 +36,30 @@ public class ViewSensor extends HttpServlet
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException
 	{
+		try
+		{
 		resp.setContentType("text/html;charset=gb2312");
 		PrintWriter out=resp.getWriter();
 		Element sensors=Sensor.getSensorListXML();
-		Transformer transformer;
-		try
-		{
-			transformer = TransformerFactory.newInstance().newTransformer();
-		}
-		catch (TransformerConfigurationException e)
-		{
-			e.printStackTrace();
-			return;
-		}
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		DOMSource source = new DOMSource(sensors); 
 		StreamResult result = new StreamResult(out);
-		try
+		transformer.transform(source, result);
+		} catch (TransformerConfigurationException e)
 		{
-			transformer.transform(source, result);
-		}
-		catch (TransformerException e)
-		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return;
+		} catch (TransformerFactoryConfigurationError e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally
+		{
+			//do nothing
 		}
 	}
 }

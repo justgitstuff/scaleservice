@@ -7,7 +7,12 @@ public class DeviceAndControlException extends Exception
 	 * 
 	 */
 	private static final long serialVersionUID = 1478834017913970826L;
-
+	public static final String ControlAlreadyExist="the combinable of the command and parameter already exists in this device(The case of the letter is not sensitive)";
+	public static final String ControlNotExist="Can't find contol with the given command and parameter belonging to the deviceTag";
+	public static final String DeviceAlreadyExist="Device Tag Already Exist.";
+	public static final String DeviceNotExist="Can't find device matches the deviceTag";
+	public static final String PrimaryKeyNotNull="You must leave the DeviceID field as null if you are to add a new device.";
+	//public static final String OperationPrimaryKeyNotNull=
 	public DeviceAndControlException()
 	{
 		// TODO Auto-generated constructor stub

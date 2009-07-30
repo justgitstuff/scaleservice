@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import dataObject.DataType;
 import exception.DataTypeException;
+import factory.PMF;
 import factory.SensorDataFactory;
 
 public class AddSensorData extends HttpServlet
@@ -19,31 +20,24 @@ public class AddSensorData extends HttpServlet
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String typeName = req.getParameter("typeName");
-		Double value = null;
 		try
 		{
+			String typeName = req.getParameter("typeName");
+			Double value = null;
 			value = Double.parseDouble(req.getParameter("value"));
-		}catch(NumberFormatException e)
+			DataType targetDataType=DataType.getDataType(typeName);
+			if(targetDataType==null)
+				throw new DataTypeException("Cannot find the Data type matches the typeName.");
+			targetDataType.addSensorData(SensorDataFactory.get().newSensorData(value));
+		} catch(NumberFormatException e)
 		{
 			e.printStackTrace();//Wrong Number Format
-		}
-		DataType targetDataType=DataType.getDataType(typeName);
-		if(targetDataType==null)
+		} catch (DataTypeException e)
 		{
-			try
-			{
-				throw new DataTypeException("Cannot find the Data type matches the typeName.");
-			} catch (DataTypeException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else
+			e.printStackTrace();
+		} finally
 		{
-			targetDataType.addSensorData(SensorDataFactory.get().newSensorData(value));
-			DataType.save();
+			PMF.saveAndClose();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

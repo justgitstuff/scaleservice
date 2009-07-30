@@ -23,7 +23,7 @@ import com.google.appengine.api.datastore.Key;
 import exception.DataTypeException;
 import factory.PMF;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class DataType
 {
 	@SuppressWarnings("unchecked")
@@ -47,12 +47,6 @@ public class DataType
 		}
 		return returnDataType;
 	}
-	public static void save()
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		pm.close();
-	}
-	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key dataTypeID;
@@ -139,13 +133,13 @@ public class DataType
 				pm.close();
 			}
 		}
-		else if(DataType.getDataType(this.typeName)!=null)
+		else if(this.dataTypeID!=null)
 		{
-			throw new DataTypeException("Data Type Name Already Exist.");
+			throw new DataTypeException(DataTypeException.PrimaryKeyNotNull);
 		}
 		else
 		{
-			throw new DataTypeException("You must leave the dataTypeID field as null if you are to add a new data type.");
+			throw new DataTypeException(DataTypeException.TypeNameAlreadyExist);
 		}
 	}
 	/**
@@ -217,5 +211,12 @@ public class DataType
 	public void setMinCustom(String minCustom)
 	{
 		this.minCustom = minCustom;
+	}
+	public boolean equals(DataType d)
+	{
+		if(d.typeName==this.typeName)
+			return true;
+		else
+			return false;
 	}
 }

@@ -23,7 +23,7 @@ import com.google.appengine.api.datastore.Key;
 import exception.SensorException;
 import factory.PMF;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Sensor
 {
 	@SuppressWarnings("unchecked")
@@ -46,11 +46,6 @@ public class Sensor
 			//noting to do
 		}
 		return returnSensor;
-	}
-	public static void save()
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		pm.close();
 	}
 	@SuppressWarnings("unchecked")
 	public static Element getSensorListXML()
@@ -212,21 +207,16 @@ public class Sensor
 		if(Sensor.getSensor(this.sensorTag)==null && this.sensorID==null)
 		{
 			PersistenceManager pm = PMF.get().getPersistenceManager();
-			try
-			{
-				pm.makePersistent(this);
-			} finally
-			{
-				pm.close();
-			}
+			pm.makePersistent(this);
+			pm.close();
 		}
-		else if(Sensor.getSensor(this.sensorTag)!=null)
+		else if(this.sensorID!=null)
 		{
-			throw new SensorException("Sensor Tag Already Exist.");
+			throw new SensorException(SensorException.PrimaryKeyNotNull);
 		}
 		else
 		{
-			throw new SensorException("You must leave the sensorID field as null if you are to add a new sensor.");
+			throw new SensorException(SensorException.SensorAlreadyExist);
 		}
 	}
 	/**
@@ -326,5 +316,12 @@ public class Sensor
 	public void setMemo(String memo)
 	{
 		this.memo = memo;
+	}
+	public boolean equals(Sensor s)
+	{
+		if(s.sensorTag==this.sensorTag)
+			return true;
+		else
+			return false;
 	}
 }
