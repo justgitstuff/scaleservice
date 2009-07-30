@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<returnInfo>
+	<record sensorAddr="FFER01" intro="AGI Lightsmart 1100"/>
+	<record sensorAddr="FFER02" intro="AGI Lightsmart 1100"/>
+	<record sensorAddr="FFER03" intro="AGI Lightsmart 1100"/>
+</returnInfo>
