@@ -10,6 +10,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -27,39 +28,38 @@ public class ViewDataType extends HttpServlet
 	private static final long serialVersionUID = -9068971802042730116L;
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String sensorTag = req.getParameter("sensorTag");
-		Sensor targetSensor=Sensor.getSensor(sensorTag);
-		if(targetSensor==null)
+		try
 		{
-			SensorException e=new SensorException("Sensor Not Exist");
-			e.printStackTrace();
-		}
-		else
-		{
+			String sensorTag = req.getParameter("sensorTag");
+			Sensor targetSensor=Sensor.getSensor(sensorTag);
+			if(targetSensor==null)
+				throw new SensorException("Sensor Not Exist");
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
 			Element dataType=targetSensor.getDataTypeListXML();
-			Transformer transformer;
-			try
-			{
-				transformer = TransformerFactory.newInstance().newTransformer();
-			}
-			catch (TransformerConfigurationException e)
-			{
-				e.printStackTrace();
-				return;
-			}
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(dataType); 
 			StreamResult result = new StreamResult(out);
-			try
-			{
-				transformer.transform(source, result);
-			}
-			catch (TransformerException e)
-			{
-				e.printStackTrace();
-				return;
-			}
+			transformer.transform(source, result);
+		} catch (SensorException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally
+		{
+			//do nothing
 		}
 	}
 }

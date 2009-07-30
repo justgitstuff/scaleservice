@@ -13,6 +13,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -34,39 +35,39 @@ public class ViewSensorData extends HttpServlet
 	private static final long serialVersionUID = 5860545035968418134L;
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String typeName = req.getParameter("typeName");
-		DataType targetDataType=DataType.getDataType(typeName);
-		if(targetDataType==null)
+		try
 		{
-			DataTypeException e=new DataTypeException("Data Type Not Exist");
-			e.printStackTrace();
-		}
-		else
-		{
+			String typeName = req.getParameter("typeName");
+			DataType targetDataType=DataType.getDataType(typeName);
+			if(targetDataType==null)
+				throw new DataTypeException("Data Type Not Exist");
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
 			Element sensorData=targetDataType.getSensorDataListXML();
-			Transformer transformer;
-			try
-			{
-				transformer = TransformerFactory.newInstance().newTransformer();
-			}
-			catch (TransformerConfigurationException e)
-			{
-				e.printStackTrace();
-				return;
-			}
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(sensorData); 
 			StreamResult result = new StreamResult(out);
-			try
-			{
-				transformer.transform(source, result);
-			}
-			catch (TransformerException e)
-			{
-				e.printStackTrace();
-				return;
-			}
+			transformer.transform(source, result);
+		} catch (DataTypeException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally
+		{
+			//do nothing
 		}
+		
 	}
 }

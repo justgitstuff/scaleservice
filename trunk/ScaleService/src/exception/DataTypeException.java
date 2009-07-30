@@ -15,6 +15,10 @@ public class DataTypeException extends Exception
 	 */
 	private static final long serialVersionUID = -5320464451376996359L;
 
+	public static final String DataTypeNotFonund="Can not find the data type matches the given type name.";
+	public static final String TypeNameAlreadyExist="The type name is already exist in the database.You need to provide a different type name.";
+	public static final String TypeNameNotExist="Can't Find data type matches the typeName";
+	public static final String PrimaryKeyNotNull="You must leave the dataTypeID field as null if you are to add a new data type.";
 	/**
 	 * 
 	 */

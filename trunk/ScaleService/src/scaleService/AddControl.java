@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import dataObject.Device;
 import exception.DeviceAndControlException;
 import factory.ControlFactory;
+import factory.PMF;
 
 public class AddControl extends HttpServlet
 {
@@ -19,26 +20,22 @@ public class AddControl extends HttpServlet
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String deviceTag = req.getParameter("deviceTag");
-		String command = req.getParameter("command");
-		String parameter = req.getParameter("parameter");
-		String action = req.getParameter("action");
-		Device targetDevice=Device.getDevice(deviceTag);
-		if(targetDevice==null)
+		try
 		{
-			try
-			{
-				throw new DeviceAndControlException("Cannot find the device matches the device tag.");
-			} catch (DeviceAndControlException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else
-		{
+			String deviceTag = req.getParameter("deviceTag");
+			String command = req.getParameter("command");
+			String parameter = req.getParameter("parameter");
+			String action = req.getParameter("action");
+			Device targetDevice=Device.getDevice(deviceTag);
+			if(targetDevice==null)
+				throw new DeviceAndControlException(DeviceAndControlException.DeviceNotExist);
 			targetDevice.addControl(ControlFactory.get().newControl(command, parameter, action));
-			Device.save();
+		} catch(DeviceAndControlException e)
+		{
+			e.printStackTrace();
+		} finally
+		{
+			PMF.saveAndClose();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

@@ -23,7 +23,7 @@ import com.google.appengine.api.datastore.Key;
 import exception.DeviceAndControlException;
 import factory.PMF;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Device
 {
 	@SuppressWarnings("unchecked")
@@ -46,11 +46,6 @@ public class Device
 			//noting to do
 		}
 		return returnDevice;
-	}
-	public static void save()
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		pm.close();
 	}
 	@SuppressWarnings("unchecked")
 	public static Element getDeviceListXML()
@@ -124,9 +119,27 @@ public class Device
 		this.currentState="Unknown";
 		this.control=new ArrayList<Control>();
 	}
-	public void addControl(Control control)
+	public void addControl(Control control) throws DeviceAndControlException
 	{
-		this.control.add(control);
+		boolean controlExist=false;
+		Control cur=null;
+		Iterator<Control> it=this.control.iterator();
+		while(it.hasNext())
+		{
+			cur=it.next();
+			if(cur.getCommand().equalsIgnoreCase(control.getCommand()))
+			{
+				if(cur.getParameter().equalsIgnoreCase(control.getParameter()))
+				{
+					controlExist=true;
+					break;
+				}
+			}
+		}
+		if(controlExist)
+			throw new DeviceAndControlException(DeviceAndControlException.ControlAlreadyExist);
+		else
+			this.control.add(control);
 	}
 	public Element getControlListXML()
 	{
@@ -173,26 +186,47 @@ public class Device
 		}
 		return root;
 	}
+	@SuppressWarnings("unchecked")
+	public Control getControl(String command,String parameter)
+	{
+		Control returnControl=null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(Control.class);
+		Control iControl;
+		try
+		{
+			List<Control> results = (List<Control>) query.execute();
+			Iterator<Control> it=results.iterator(); 
+			while(it.hasNext())
+			{
+				iControl=it.next();
+				iControl.setDevice(pm.getObjectById(Device.class, iControl.getDevice().getDeviceID()));
+				if(iControl.getDevice().equals(this) && iControl.getCommand().equals(command) && iControl.getParameter().equals(parameter))
+				{
+					returnControl=iControl;
+					break;
+				}
+			}
+		}finally
+		{
+			//noting to do
+		}
+		return returnControl;
+	}
 	public void saveAsNew() throws DeviceAndControlException
 	{
 		if(Device.getDevice(deviceTag)==null && this.deviceID==null)
 		{
 			PersistenceManager pm = PMF.get().getPersistenceManager();
-			try
-			{
-				pm.makePersistent(this);
-			} finally
-			{
-				pm.close();
-			}
+			pm.makePersistent(this);
 		}
-		else if(Device.getDevice(deviceTag)!=null)
+		else if(this.deviceID!=null)
 		{
-			throw new DeviceAndControlException("Device Tag Already Exist.");
+			throw new DeviceAndControlException(DeviceAndControlException.PrimaryKeyNotNull);
 		}
 		else
 		{
-			throw new DeviceAndControlException("You must leave the DeviceID field as null if you are to add a new device.");
+			throw new DeviceAndControlException(DeviceAndControlException.DeviceAlreadyExist);
 		}
 	}
 	/**
@@ -250,5 +284,12 @@ public class Device
 	public void setCurrentState(String currentState)
 	{
 		this.currentState = currentState;
+	}
+	public boolean equals(Device d)
+	{
+		if(d.deviceTag.equals(this.deviceTag))
+			return true;
+		else
+			return false;
 	}
 }

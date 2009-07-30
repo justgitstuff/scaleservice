@@ -8,7 +8,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Control
 {
 	@PrimaryKey
@@ -20,6 +20,16 @@ public class Control
 	private String parameter;
 	@Persistent
 	private String action;//describe the command
+	@Persistent(mappedBy = "control")
+	private Device device;
+	public Control(String command, String parameter)
+	{
+		super();
+		this.command = command;
+		this.parameter = parameter;
+		this.action = "Undefined";
+	}
+	//TODO ÃÌº”effectsÀ´œÚ Ù–‘
 	/**
 	 * @param command
 	 * @param parameter
@@ -61,6 +71,13 @@ public class Control
 		return action;
 	}
 	/**
+	 * @return the device
+	 */
+	public Device getDevice()
+	{
+		return device;
+	}
+	/**
 	 * @param controlID the controlID to set
 	 */
 	public void setControlID(Key controlID)
@@ -87,6 +104,23 @@ public class Control
 	public void setAction(String action)
 	{
 		this.action = action;
+	}
+	/**
+	 * @param device the device to set
+	 */
+	public void setDevice(Device device)
+	{
+		this.device = device;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Control obj)
+	{
+		if(this.command.equals(obj.getCommand()) && this.parameter.equals(obj.getParameter()))
+			return true;
+		else
+			return false;
 	}
 	
 }
