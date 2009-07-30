@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundImage="@Embed(source='img/bgblue.jpg')" applicationComplete="init();" height="550" width="800">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			private function init():void
+			{
+				this.stage.displayState=StageDisplayState.NORMAL;
+				var cam:Camera = Camera.getCamera(); 
+				if (cam == null) 
+				{ 
+				    Alert.show("您的CCR尚未连接摄像头，请您确认摄像头的链接","未找到摄像头");
+				} 
+				else 
+				{ 
+				    vid.attachCamera(cam); 
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:Style source="Main.css"/>
+	<mx:Panel layout="absolute" width="363" title="Scale安防" right="10" top="10" bottom="10">
+		<mx:VideoDisplay id="vid" left="10" right="10" top="39" height="240"/>
+		<mx:Label x="10" y="10" text="监控摄像:"/>
+		<mx:Button label="打开门禁" icon="@Embed(source='img/yes.png')" height="50" left="10" width="112" bottom="68"/>
+		<mx:Label text="门禁" left="10" bottom="126"/>
+		<mx:Button label="关闭门禁" icon="@Embed(source='img/no.png')" height="50" left="10" right="221" bottom="10"/>
+		<mx:Label y="290" text="报警" left="130"/>
+		<mx:TextInput y="314" width="166" left="167"/>
+		<mx:Label y="316" text="地点" left="130"/>
+		<mx:Label y="348" text="内容" left="130"/>
+		<mx:Button label="报警" right="10" bottom="10"/>
+		<mx:TextArea borderStyle="solid" borderColor="#000000" top="347" bottom="43" right="10" left="167"/>
+	</mx:Panel>
+	<mx:Panel layout="absolute" title="背景音乐" top="10" bottom="190" left="10" right="381">
+		<mx:Label x="10" y="10" text="音乐目录:"/>
+		<mx:FileSystemList left="10" right="134" top="39" bottom="10"/>
+		<mx:Label y="10" text="当前播放" right="73"/>
+		<mx:Label y="42" text="标题" right="97"/>
+		<mx:Label y="71" text="MUSIC TITLE" right="45"/>
+		<mx:Label y="100" text="艺术家" right="85"/>
+		<mx:Label y="129" text="ARTIST" right="78"/>
+		<mx:Label y="158" text="专辑" right="97"/>
+		<mx:Label y="187" text="ALBUM" right="76"/>
+		<mx:Button label="开始播放" icon="@Embed(source='img/play.png')" width="116" right="10" bottom="10"/>
+	</mx:Panel>
+	<mx:Panel layout="absolute" title="快速访问" height="172" left="10" right="381" bottom="10">
+		<mx:Button label="关闭所有设备" icon="@Embed(source='img/favourites_us.png')" left="10" top="10"/>
+		<mx:Button label="进入首选场景" icon="@Embed(source='img/favourites_us.png')" right="10" top="10"/>
+		<mx:ProgressBar label="下一次自动控制时间" id="pTime" indeterminate="false" mode="manual" y="55" right="10" left="10"/>
+		<mx:Button label="暂停自动控制" right="10" bottom="10"/>
+	</mx:Panel>
+	
+</mx:WindowedApplication>
