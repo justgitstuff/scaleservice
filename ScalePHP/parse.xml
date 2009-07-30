@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<root><row lAddrID="15534" commandID="OFF" sensorDataTypeID="2" inc="0" targetDescription="Air Conditioner" typeName="KeTingWenDu" commandDescription="Turn off"/><row lAddrID="25543" commandID="ON" sensorDataTypeID="110" inc="1" targetDescription="Curtain" typeName="Temperature2" commandDescription="Turn on"/><actionReturn>1</actionReturn></root>
