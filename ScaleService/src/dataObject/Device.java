@@ -92,7 +92,7 @@ public class Device
 		}
 		finally
 		{
-			pm.close();
+			//do nothing
 		}
 		return root;
 	}

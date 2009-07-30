@@ -17,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import dataObject.Device;
+import factory.PMF;
 
 public class ViewDevice extends HttpServlet
 {
@@ -51,7 +52,7 @@ public class ViewDevice extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			//do nothing
+			PMF.saveAndClose();
 		}
 	}
 }

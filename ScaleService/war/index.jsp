@@ -251,7 +251,13 @@
     <input type="submit" name="button4" id="button4" value="添加">
   </p>
 </form></td>
-    <td class="LayoutTable">&nbsp;</td>
+    <td class="LayoutTable"><form name="form4" method="get" action="/view_operation">
+  <p><strong>查看操作</strong>  </p>
+  
+  <p>
+    <input type="submit" name="button4" id="button4" value="查看">
+  </p>
+</form></td>
   </tr>
 </table>
 <p>&nbsp;</p>

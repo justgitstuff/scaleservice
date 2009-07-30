@@ -20,6 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import dataObject.Sensor;
+import factory.PMF;
 
 /**
  * @author ÕıÕ¨÷€
@@ -38,13 +39,13 @@ public class ViewSensor extends HttpServlet
 	{
 		try
 		{
-		resp.setContentType("text/html;charset=gb2312");
-		PrintWriter out=resp.getWriter();
-		Element sensors=Sensor.getSensorListXML();
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		DOMSource source = new DOMSource(sensors); 
-		StreamResult result = new StreamResult(out);
-		transformer.transform(source, result);
+			resp.setContentType("text/html;charset=gb2312");
+			PrintWriter out=resp.getWriter();
+			Element sensors=Sensor.getSensorListXML();
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			DOMSource source = new DOMSource(sensors); 
+			StreamResult result = new StreamResult(out);
+			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e)
 		{
 			// TODO Auto-generated catch block
@@ -59,7 +60,7 @@ public class ViewSensor extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			//do nothing
+			PMF.saveAndClose();
 		}
 	}
 }

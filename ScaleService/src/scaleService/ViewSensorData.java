@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 
 import dataObject.DataType;
 import exception.DataTypeException;
+import factory.PMF;
 
 /**
  * @author ÕıÕ¨÷€
@@ -66,7 +67,7 @@ public class ViewSensorData extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			//do nothing
+			PMF.saveAndClose();
 		}
 		
 	}

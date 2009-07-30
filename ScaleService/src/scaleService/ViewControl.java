@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import dataObject.Device;
 import exception.DeviceAndControlException;
+import factory.PMF;
 
 public class ViewControl extends HttpServlet
 {
@@ -59,7 +60,7 @@ public class ViewControl extends HttpServlet
 			e.printStackTrace();
 		}finally
 		{
-			//do nothing
+			PMF.saveAndClose();
 		}
 		
 	}
