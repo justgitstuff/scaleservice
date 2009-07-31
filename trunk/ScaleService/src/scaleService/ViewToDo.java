@@ -21,21 +21,21 @@ import util.Generator;
 import dataObject.Operation;
 import factory.PMF;
 
-public class ViewOperation extends HttpServlet
+public class ViewToDo extends HttpServlet
 {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3205635561244522894L;
-
+	private static final long serialVersionUID = -939617794703400960L;
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws IOException
+	throws IOException
 	{
 		try
 		{
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element operation=Generator.buildOperationXML(Operation.getOperationList());
+			Element operation=Generator.buildOperationXML(Operation.findAllToDo());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(operation); 
 			StreamResult result = new StreamResult(out);

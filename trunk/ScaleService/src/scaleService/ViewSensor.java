@@ -19,6 +19,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 
+import util.Generator;
+
 import dataObject.Sensor;
 import factory.PMF;
 
@@ -41,7 +43,7 @@ public class ViewSensor extends HttpServlet
 		{
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element sensors=Sensor.getSensorListXML();
+			Element sensors=Generator.buildSensorXML(Sensor.getSensor());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(sensors); 
 			StreamResult result = new StreamResult(out);

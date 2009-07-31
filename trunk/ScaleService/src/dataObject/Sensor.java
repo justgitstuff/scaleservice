@@ -1,7 +1,6 @@
 package dataObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -11,12 +10,6 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -48,64 +41,12 @@ public class Sensor
 		return returnSensor;
 	}
 	@SuppressWarnings("unchecked")
-	public static Element getSensorListXML()
+	public static List<Sensor> getSensor()
 	{
-		DocumentBuilder db;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Sensor.class);
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("sensors");
-		try
-		{
-			List<Sensor> results = (List<Sensor>) query.execute();
-			if (results.iterator().hasNext())
-			{
-				for (Sensor e : results)
-				{
-					Element sensorItem=XMLDoc.createElement("row");
-
-					Element sensorTag=XMLDoc.createElement("sensorTag");
-					sensorTag.appendChild(XMLDoc.createTextNode(e.getSensorTag()));
-					
-					Element sensorName=XMLDoc.createElement("sensorName");
-					sensorName.appendChild(XMLDoc.createTextNode(e.getSensorName()));
-					
-					Element location=XMLDoc.createElement("location");
-					location.appendChild(XMLDoc.createTextNode(e.getLocation()));
-					
-					Element manufacturer=XMLDoc.createElement("manufacturer");
-					manufacturer.appendChild(XMLDoc.createTextNode(e.getManufacturer()));
-					
-					Element description=XMLDoc.createElement("description");
-					description.appendChild(XMLDoc.createTextNode(e.getDescription()));
-					
-					Element memo=XMLDoc.createElement("memo");
-					memo.appendChild(XMLDoc.createTextNode(e.getMemo()));
-					
-					sensorItem.appendChild(sensorTag);
-					sensorItem.appendChild(sensorName);
-					sensorItem.appendChild(location);
-					sensorItem.appendChild(manufacturer);
-					sensorItem.appendChild(description);
-					sensorItem.appendChild(memo);
-					root.appendChild(sensorItem);
-				}
-			}
-		}
-		finally
-		{
-			//do nothing
-		}
-		return root;
+		List<Sensor> results = (List<Sensor>) query.execute();
+		return results;
 	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -154,53 +95,9 @@ public class Sensor
 	{
 		this.dataType.add(dataType);
 	}
-	public Element getDataTypeListXML()
+	public List<DataType> getDataType()
 	{
-		DocumentBuilder db;
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("dataType");
-		try
-		{
-			Iterator<DataType> it=dataType.iterator();
-			if (it.hasNext())
-			{
-				for (DataType e : dataType)
-				{
-					Element dataTypeItem=XMLDoc.createElement("row");
-
-					Element unit=XMLDoc.createElement("unit");
-					unit.appendChild(XMLDoc.createTextNode(e.getUnit()));
-					
-					Element typeName=XMLDoc.createElement("typeName");
-					typeName.appendChild(XMLDoc.createTextNode(e.getTypeName()));
-					
-					Element maxCustom=XMLDoc.createElement("maxCustom");
-					maxCustom.appendChild(XMLDoc.createTextNode(e.getMaxCustom()));
-					
-					Element minCustom=XMLDoc.createElement("minCustom");
-					minCustom.appendChild(XMLDoc.createTextNode(e.getMinCustom()));
-					
-					dataTypeItem.appendChild(unit);
-					dataTypeItem.appendChild(typeName);
-					dataTypeItem.appendChild(maxCustom);
-					dataTypeItem.appendChild(minCustom);
-					root.appendChild(dataTypeItem);
-				}
-			}
-		} finally
-		{
-			//do nothing
-		}
-		return root;
+		return dataType;
 	}
 	public void saveAsNew() throws SensorException
 	{
