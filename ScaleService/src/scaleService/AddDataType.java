@@ -24,8 +24,8 @@ public class AddDataType extends HttpServlet
 		{
 			String unit = req.getParameter("unit");
 			String typeName = req.getParameter("typeName");
-			String maxCustom = req.getParameter("maxCustom");
-			String minCustom = req.getParameter("minCustom");
+			Double maxCustom = Double.parseDouble(req.getParameter("maxCustom"));
+			Double minCustom = Double.parseDouble(req.getParameter("minCustom"));
 			String sensorTag = req.getParameter("sensorTag");
 			DataType newDataType=new DataType(unit,typeName,maxCustom,minCustom);
 			Sensor targetSensor=Sensor.getSensor(sensorTag);

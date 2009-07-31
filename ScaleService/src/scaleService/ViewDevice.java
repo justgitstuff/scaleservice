@@ -16,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 
+import util.Generator;
+
 import dataObject.Device;
 import factory.PMF;
 
@@ -33,7 +35,7 @@ public class ViewDevice extends HttpServlet
 		{
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element devices=Device.getDeviceListXML();
+			Element devices=Generator.buildDeviceXML(Device.getDeviceList());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(devices); 
 			StreamResult result = new StreamResult(out);

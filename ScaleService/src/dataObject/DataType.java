@@ -11,12 +11,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import util.Direction;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -55,9 +51,9 @@ public class DataType
 	@Persistent
 	private String typeName;
 	@Persistent
-	private String maxCustom;
+	private Double maxCustom;
 	@Persistent
-	private String minCustom;
+	private Double minCustom;
 	@Persistent
 	private List<SensorData> sensorData;
 	/**
@@ -66,8 +62,8 @@ public class DataType
 	 * @param maxCustom
 	 * @param minCustom
 	 */
-	public DataType(String unit, String typeName, String maxCustom,
-			String minCustom)
+	public DataType(String unit, String typeName, Double maxCustom,
+			Double minCustom)
 	{
 		super();
 		this.unit = unit;
@@ -80,45 +76,13 @@ public class DataType
 	{
 		this.sensorData.add(sensorData);
 	}
-	public Element getSensorDataListXML()
+	
+	/**
+	 * @return the sensorData
+	 */
+	public List<SensorData> getSensorData()
 	{
-		DocumentBuilder db;
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("sensorData");
-		try
-		{
-			Iterator<SensorData> it=sensorData.iterator();
-			if (it.hasNext())
-			{
-				for (SensorData e : sensorData)
-				{
-					Element sensorDataItem=XMLDoc.createElement("row");
-
-					Element value=XMLDoc.createElement("value");
-					value.appendChild(XMLDoc.createTextNode(String.valueOf(e.getValue())));
-					
-					Element time=XMLDoc.createElement("time");
-					time.appendChild(XMLDoc.createTextNode(e.getTime().toString()));
-					
-					sensorDataItem.appendChild(value);
-					sensorDataItem.appendChild(time);
-					root.appendChild(sensorDataItem);
-				}
-			}
-		} finally
-		{
-			//do nothing
-		}
-		return root;
+		return sensorData;
 	}
 	public void saveAsNew() throws DataTypeException
 	{
@@ -166,14 +130,14 @@ public class DataType
 	/**
 	 * @return the maxCustom
 	 */
-	public String getMaxCustom()
+	public Double getMaxCustom()
 	{
 		return maxCustom;
 	}
 	/**
 	 * @return the minCustom
 	 */
-	public String getMinCustom()
+	public Double getMinCustom()
 	{
 		return minCustom;
 	}
@@ -201,22 +165,90 @@ public class DataType
 	/**
 	 * @param maxCustom the maxCustom to set
 	 */
-	public void setMaxCustom(String maxCustom)
+	public void setMaxCustom(Double maxCustom)
 	{
 		this.maxCustom = maxCustom;
 	}
 	/**
 	 * @param minCustom the minCustom to set
 	 */
-	public void setMinCustom(String minCustom)
+	public void setMinCustom(Double minCustom)
 	{
 		this.minCustom = minCustom;
 	}
 	public boolean equals(DataType d)
 	{
-		if(d.typeName==this.typeName)
+		if(d.typeName.equals(this.typeName))
 			return true;
 		else
 			return false;
+	}
+	/**
+	 * 查找当前数据类型的值是否符合要求，如果不符合要求的话则返回相应的解决方案
+	 * @return List<Operation>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Operation> findToDo()
+	{
+		SensorData lastSensorData=getLastSensorData();
+		List<Operation> todo=new ArrayList<Operation>();
+		Operation iOperation;
+		if(lastSensorData.getValue()>this.maxCustom)//如果当前值超过了预定值
+		{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			Query query = pm.newQuery(Operation.class);
+			try
+			{
+				List<Operation> results = (List<Operation>) query.execute();
+				Iterator<Operation> it=results.iterator();
+				while(it.hasNext())
+				{
+					iOperation=it.next();
+					if(iOperation.getDataType().equals(this) && iOperation.getDirection().equals(Direction.Down))
+					{
+						todo.add(iOperation);
+					}
+				}
+			}finally
+			{
+				//noting to do
+			}
+		}
+		else if(lastSensorData.getValue()<this.minCustom)
+		{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			Query query = pm.newQuery(Operation.class);
+			try
+			{
+				List<Operation> results = (List<Operation>) query.execute();
+				Iterator<Operation> it=results.iterator();
+				while(it.hasNext())
+				{
+					iOperation=it.next();
+					if(iOperation.getDataType().equals(this) && iOperation.getDirection().equals(Direction.Up))
+					{
+						todo.add(iOperation);
+					}
+				}
+			}finally
+			{
+				//noting to do
+			}
+		}
+		return todo;
+	}
+	/**
+	 * 获取当前数据类型的最后一次数据
+	 * @return SensorData
+	 */
+	public SensorData getLastSensorData()
+	{
+		Iterator<SensorData> it=sensorData.iterator();
+		SensorData lastSensorData=null;
+		while(it.hasNext())
+		{
+			lastSensorData=it.next();
+		}
+		return lastSensorData;
 	}
 }

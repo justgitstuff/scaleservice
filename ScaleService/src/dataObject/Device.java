@@ -11,12 +11,6 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -48,53 +42,12 @@ public class Device
 		return returnDevice;
 	}
 	@SuppressWarnings("unchecked")
-	public static Element getDeviceListXML()
+	public static List<Device> getDeviceList()
 	{
-		DocumentBuilder db;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Device.class);
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("device");
-		try
-		{
-			List<Device> results = (List<Device>) query.execute();
-			if (results.iterator().hasNext())
-			{
-				for (Device e : results)
-				{
-					Element deviceItem=XMLDoc.createElement("row");
-
-					Element deviceTag=XMLDoc.createElement("deviceTag");
-					deviceTag.appendChild(XMLDoc.createTextNode(e.getDeviceTag()));
-					
-					Element intro=XMLDoc.createElement("intro");
-					intro.appendChild(XMLDoc.createTextNode(e.getIntro()));
-					
-					Element currentState=XMLDoc.createElement("currentState");
-					currentState.appendChild(XMLDoc.createTextNode(e.getCurrentState()));
-								
-					deviceItem.appendChild(deviceTag);
-					deviceItem.appendChild(intro);
-					deviceItem.appendChild(currentState);
-					
-					root.appendChild(deviceItem);
-				}
-			}
-		}
-		finally
-		{
-			//do nothing
-		}
-		return root;
+		List<Device> results = (List<Device>) query.execute();
+		return results;
 	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -141,50 +94,9 @@ public class Device
 		else
 			this.control.add(control);
 	}
-	public Element getControlListXML()
+	public List<Control> getControl()
 	{
-		DocumentBuilder db;
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("control");
-		try
-		{
-			Iterator<Control> it=control.iterator();
-			if (it.hasNext())
-			{
-				for (Control e : control)
-				{
-					Element controItem=XMLDoc.createElement("row");
-
-					Element command=XMLDoc.createElement("command");
-					command.appendChild(XMLDoc.createTextNode(e.getCommand()));
-					
-					Element parameter=XMLDoc.createElement("parameter");
-					parameter.appendChild(XMLDoc.createTextNode(e.getParameter()));
-					
-					Element action=XMLDoc.createElement("action");
-					action.appendChild(XMLDoc.createTextNode(e.getAction()));
-										
-					controItem.appendChild(command);
-					controItem.appendChild(parameter);
-					controItem.appendChild(action);
-					
-					root.appendChild(controItem);
-				}
-			}
-		} finally
-		{
-			//do nothing
-		}
-		return root;
+		return control;
 	}
 	@SuppressWarnings("unchecked")
 	public Control getControl(String command,String parameter)

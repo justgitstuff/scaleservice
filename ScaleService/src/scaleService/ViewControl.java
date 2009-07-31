@@ -16,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 
+import util.Generator;
+
 import dataObject.Device;
 import exception.DeviceAndControlException;
 import factory.PMF;
@@ -37,7 +39,7 @@ public class ViewControl extends HttpServlet
 				throw new DeviceAndControlException("Cannot find the Device matches the deviceTag.");
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element control=targetDevice.getControlListXML();
+			Element control=Generator.buildControlXML(targetDevice.getControl());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(control); 
 			StreamResult result = new StreamResult(out);

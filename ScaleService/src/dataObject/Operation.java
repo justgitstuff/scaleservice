@@ -1,5 +1,6 @@
 package dataObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,12 +11,6 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import util.Direction;
 
@@ -54,56 +49,12 @@ public class Operation
 		return returnOperation;
 	}
 	@SuppressWarnings("unchecked")
-	public static Element getOperationListXML()
+	public static List<Operation> getOperationList()
 	{
-		DocumentBuilder db;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query query = pm.newQuery(Operation.class);
-		try
-		{
-			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		catch (ParserConfigurationException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		Document XMLDoc=db.newDocument();
-		Element root=XMLDoc.createElement("operation");
-		try
-		{
-			List<Operation> results = (List<Operation>) query.execute();
-			if (results.iterator().hasNext())
-			{
-				for (Operation e : results)
-				{
-					Element operationItem=XMLDoc.createElement("row");
-
-					Element controlCommand=XMLDoc.createElement("control_command");
-					controlCommand.appendChild(XMLDoc.createTextNode(e.getControl().getCommand()));
-					
-					Element controlParam=XMLDoc.createElement("control_parameter");
-					controlParam.appendChild(XMLDoc.createTextNode(e.getControl().getParameter()));
-					
-					Element dataTypeID=XMLDoc.createElement("dataTypeID");
-					dataTypeID.appendChild(XMLDoc.createTextNode(e.getDataType().getTypeName()));
-					
-					Element direction=XMLDoc.createElement("direction");
-					direction.appendChild(XMLDoc.createTextNode(e.getDirection().toString()));
-					
-					operationItem.appendChild(controlCommand);
-					operationItem.appendChild(controlParam);
-					operationItem.appendChild(dataTypeID);
-					operationItem.appendChild(direction);
-					root.appendChild(operationItem);
-				}
-			}
-		}
-		finally
-		{
-			//do nothing
-		}
-		return root;
+		List<Operation> results = (List<Operation>) query.execute();
+		return results;
 	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -218,6 +169,28 @@ public class Operation
 	{
 		this.dataTypeID = dataTypeID;
 	}
-	
-	
+	/**
+	 * 获取所有DataType中的解决方案，写入一个List中
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<Operation> findAllToDo()
+	{
+		List<Operation> allToDo=new ArrayList<Operation>();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query query = pm.newQuery(DataType.class);
+		try
+		{
+			List<DataType> results = (List<DataType>) query.execute();
+			Iterator<DataType> it=results.iterator();
+			while(it.hasNext())
+			{
+				allToDo.addAll(it.next().findToDo());
+			}
+		}finally
+		{
+			//noting to do
+		}
+		return allToDo;
+	}
 }

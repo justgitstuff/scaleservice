@@ -52,6 +52,10 @@
         <servlet-name>viewOperation</servlet-name>
         <servlet-class>scaleService.ViewOperation</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>viewToDo</servlet-name>
+        <servlet-class>scaleService.ViewToDo</servlet-class>
+    </servlet>
     
     
     
@@ -102,6 +106,10 @@
     <servlet-mapping>
         <servlet-name>viewOperation</servlet-name>
         <url-pattern>/view_operation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewToDo</servlet-name>
+        <url-pattern>/view_toDo</url-pattern>
     </servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

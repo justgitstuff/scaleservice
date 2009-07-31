@@ -16,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Element;
 
+import util.Generator;
+
 import dataObject.Sensor;
 import exception.SensorException;
 import factory.PMF;
@@ -37,7 +39,7 @@ public class ViewDataType extends HttpServlet
 				throw new SensorException("Sensor Not Exist");
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element dataType=targetSensor.getDataTypeListXML();
+			Element dataType=Generator.buildDataTypeXML(targetSensor.getDataType());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource source = new DOMSource(dataType); 
 			StreamResult result = new StreamResult(out);
