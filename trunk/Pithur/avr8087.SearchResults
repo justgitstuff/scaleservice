@@ -1,0 +1,40 @@
+---- delay_us Matches (39 in 6 files) ----
+Compiler_avr.h (inc):#define delay_us( us )   ( __delay_cycles( ( F_CPU / 1000000UL ) * ( us ) ) )
+Compiler_avr.h (inc):#define delay_us( us )   (_delay_us( us ))
+Compiler_avr32.h (inc):#define delay_us( us )   ( __delay_cycles( ( F_CPU / 1000000UL ) * ( us ) ) )
+Compiler_sam7.h (inc):#define delay_us( us )   ( __delay_cycles( ( F_CPU / 1000000UL ) * ( us ) ) )
+Compiler_sam7.h (inc):#define delay_us( us )   (_delay_us( us ))
+Hal_avr.c (source):    delay_us(1);
+Sal.c (source):    delay_us(24);
+Tat.c (source):	delay_us( TIME_TO_ENTER_P_ON );
+Tat.c (source):	delay_us( TIME_P_ON_TO_TRX_OFF ); //Wait for the transition to be complete.
+Tat.c (source):		delay_us( TIME_PLL_LOCK );
+Tat.c (source):	delay_us( TIME_ED_MEASUREMENT ); //Wait 128 us + 12 us computation time.
+Tat.c (source):	delay_us( TIME_CCA );
+Tat.c (source):	delay_us( TIME_FTN_TUNING ); //Wait for the calibration to finish.
+Tat.c (source):	delay_us( TIME_PLL_LOCK );
+Tat.c (source):			delay_us( TIME_STATE_TRANSITION_PLL_ACTIVE );
+Tat.c (source):			delay_us( TIME_STATE_TRANSITION_PLL_ACTIVE );
+Tat.c (source):			delay_us( TIME_TRX_OFF_TO_PLL_ACTIVE );
+Tat.c (source):			delay_us( TIME_STATE_TRANSITION_PLL_ACTIVE );
+Tat.c (source):	delay_us( TIME_SLEEP_TO_TRX_OFF );
+Tat.c (source):	delay_us( TIME_NOCLK_TO_WAKE );
+Tat.c (source):	delay_us( TIME_CMD_FORCE_TRX_OFF );
+Tat.c (source):    delay_us(SLEEP_TO_TRX_OFF_US);
+Tat.c (source):    delay_us(RST_PULSE_WIDTH_US);
+Tat.c (source):            delay_us(1);
+Tat.c (source):            delay_us(TRX_OFF_TO_SLEEP_TIME);
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);// PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):                    delay_us(1);//PAL_WAIT_1_US();
+Tat.c (source):		delay_us(1);
