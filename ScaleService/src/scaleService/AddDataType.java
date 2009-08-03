@@ -40,7 +40,7 @@ public class AddDataType extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			DataType.closePersistentManager();
+			DataType.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

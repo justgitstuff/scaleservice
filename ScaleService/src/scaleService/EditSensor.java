@@ -35,7 +35,7 @@ public class EditSensor extends HttpServlet
 			targetSensor.setManufacturer(manufacturer);
 			targetSensor.setDescription(description);
 			targetSensor.setMemo(memo);
-			Sensor.closePersistentManager();
+			Sensor.closePersistenceManager();
 		} catch (UserException e)
 		{
 			// TODO Auto-generated catch block
@@ -46,6 +46,7 @@ public class EditSensor extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
+			Sensor.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

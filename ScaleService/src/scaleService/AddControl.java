@@ -39,6 +39,7 @@ public class AddControl extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
+			Device.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

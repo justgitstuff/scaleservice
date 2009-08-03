@@ -51,7 +51,7 @@ public class AddScene extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			Scene.closePersistentManager();
+			Scene.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");//Test Period Only
 		}
 	}

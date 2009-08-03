@@ -30,7 +30,7 @@ public class Device extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			try
 			{
 				return pm.getObjectById(Device.class, user.getNickname()+"."+deviceTag);
@@ -51,7 +51,7 @@ public class Device extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Device.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
@@ -99,7 +99,7 @@ public class Device extends DOBase
 		    	this.userNickname=user.getNickname();
 		    	Key id = KeyFactory.createKey(Device.class.getSimpleName(),userNickname+"."+deviceTag);
 		    	this.deviceID=id;
-		    	PersistenceManager pm = getPersistentManager();
+		    	PersistenceManager pm = getPersistenceManager();
 				pm.makePersistent(this);
 		    }
 		    else

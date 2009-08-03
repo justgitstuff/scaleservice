@@ -41,7 +41,7 @@ public class AddSensorData extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			DataType.closePersistentManager();
+			DataType.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

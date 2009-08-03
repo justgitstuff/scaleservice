@@ -10,25 +10,22 @@ import dataObject.DataType;
 import exception.DataTypeException;
 import exception.UserException;
 
-public class EditDataType extends HttpServlet
+public class DeleteDataType extends HttpServlet
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8991384141091094960L;
+	private static final long serialVersionUID = -6288290312743628849L;
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		try
 		{
-			String unit = req.getParameter("unit");
 			String typeName = req.getParameter("typeName");
-			Double maxCustom = Double.parseDouble(req.getParameter("maxCustom"));
-			Double minCustom = Double.parseDouble(req.getParameter("minCustom"));
 			DataType targetDataType=DataType.getDataType(typeName);
 			if(targetDataType==null)
 				throw new DataTypeException(DataTypeException.DataTypeNotFonund); 
-			targetDataType.setAll(unit, typeName, maxCustom, minCustom);
+			DataType.deleteDO(targetDataType);
 		} catch (UserException e)
 		{
 			// TODO Auto-generated catch block

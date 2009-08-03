@@ -17,6 +17,10 @@
         <servlet-class>scaleService.ViewSensor</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>deleteSensor</servlet-name>
+        <servlet-class>scaleService.DeleteSensor</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>addDataType</servlet-name>
         <servlet-class>scaleService.AddDataType</servlet-class>
     </servlet>
@@ -27,6 +31,10 @@
     <servlet>
         <servlet-name>viewDataType</servlet-name>
         <servlet-class>scaleService.ViewDataType</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>deleteDataType</servlet-name>
+        <servlet-class>scaleService.DeleteDataType</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>addSensorData</servlet-name>
@@ -47,6 +55,10 @@
     <servlet>
         <servlet-name>viewDevice</servlet-name>
         <servlet-class>scaleService.ViewDevice</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>deleteDevice</servlet-name>
+        <servlet-class>scaleService.DeleteDevice</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>addControl</servlet-name>
@@ -77,6 +89,10 @@
         <servlet-class>scaleService.ViewScene</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>deleteScene</servlet-name>
+        <servlet-class>scaleService.DeleteScene</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>addSceneControl</servlet-name>
         <servlet-class>scaleService.AddSceneControl</servlet-class>
     </servlet>
@@ -88,6 +104,11 @@
         <servlet-name>viewSceneControl</servlet-name>
         <servlet-class>scaleService.ViewSceneControl</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>deleteSceneControl</servlet-name>
+        <servlet-class>scaleService.DeleteSceneControl</servlet-class>
+    </servlet>
+    
     
     
     
@@ -105,6 +126,10 @@
         <url-pattern>/view_sensor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>deleteSensor</servlet-name>
+        <url-pattern>/delete_sensor</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>addDataType</servlet-name>
         <url-pattern>/add_dataType</url-pattern>
     </servlet-mapping>
@@ -115,6 +140,10 @@
     <servlet-mapping>
         <servlet-name>viewDataType</servlet-name>
         <url-pattern>/view_dataType</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteDataType</servlet-name>
+        <url-pattern>/delete_dataType</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addSensorData</servlet-name>
@@ -137,6 +166,10 @@
         <url-pattern>/view_device</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>deleteDevice</servlet-name>
+        <url-pattern>/delete_device</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>addControl</servlet-name>
         <url-pattern>/add_control</url-pattern>
     </servlet-mapping>
@@ -156,9 +189,6 @@
         <servlet-name>viewToDo</servlet-name>
         <url-pattern>/view_toDo</url-pattern>
     </servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
 	<servlet-mapping>
         <servlet-name>addScene</servlet-name>
         <url-pattern>/add_scene</url-pattern>
@@ -166,6 +196,10 @@
     <servlet-mapping>
         <servlet-name>viewScene</servlet-name>
         <url-pattern>/view_scene</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteScene</servlet-name>
+        <url-pattern>/delete_scene</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addSceneControl</servlet-name>
@@ -179,4 +213,12 @@
         <servlet-name>viewSceneControl</servlet-name>
         <url-pattern>/view_sceneControl</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteSceneControl</servlet-name>
+        <url-pattern>/delete_sceneControl</url-pattern>
+    </servlet-mapping>
+    
+    <welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
 </web-app>

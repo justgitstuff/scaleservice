@@ -13,12 +13,12 @@ import exception.DeviceAndControlException;
 import exception.SceneException;
 import exception.UserException;
 
-public class AddSceneControl extends HttpServlet
+public class DeleteSceneControl extends HttpServlet
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8053509545125831546L;
+	private static final long serialVersionUID = -4318918788964576204L;
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
@@ -37,7 +37,7 @@ public class AddSceneControl extends HttpServlet
 			Scene targetScene=Scene.getScene(sceneName);
 			if(targetScene==null)
 				throw new SceneException(SceneException.SceneNotExist);
-			targetScene.addControl(control);
+			targetScene.removeSceneControl(control);
 		} catch(DeviceAndControlException e)
 		{
 			e.printStackTrace();
