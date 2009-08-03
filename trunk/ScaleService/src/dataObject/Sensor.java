@@ -30,7 +30,7 @@ public class Sensor extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			try
 			{
 				return pm.getObjectById(Sensor.class, user.getNickname()+"."+sensorTag);
@@ -51,7 +51,7 @@ public class Sensor extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Sensor.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
@@ -131,7 +131,7 @@ public class Sensor extends DOBase
 		    	this.userNickname=user.getNickname();
 		    	Key id = KeyFactory.createKey(Sensor.class.getSimpleName(),userNickname+"."+sensorTag);
 		    	this.sensorID=id;
-		    	PersistenceManager pm = getPersistentManager();
+		    	PersistenceManager pm = getPersistenceManager();
 				pm.makePersistent(this);
 		    }
 		    else

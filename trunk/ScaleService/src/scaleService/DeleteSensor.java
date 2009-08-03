@@ -1,6 +1,3 @@
-/**
- * 
- */
 package scaleService;
 
 import java.io.IOException;
@@ -13,39 +10,33 @@ import dataObject.Sensor;
 import exception.SensorException;
 import exception.UserException;
 
-/**
- * @author ÕıÕ¨÷€
- * 
- */
-public class AddSensor extends HttpServlet
+public class DeleteSensor extends HttpServlet
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7728184558568191804L;
+	private static final long serialVersionUID = 3978387835017570195L;
+
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		try
 		{
 			String sensorTag = req.getParameter("sensorTag");
-			String sensorName = req.getParameter("sensorName");
-			String location = req.getParameter("location");
-			String manufacturer = req.getParameter("manufacturer");
-			String description = req.getParameter("description");
-			String memo = req.getParameter("memo");
-			Sensor newSensor=new Sensor(sensorTag,sensorName,location,manufacturer, description, memo);
-			newSensor.saveAsNew();
-			Sensor.closePersistenceManager();
-		} catch (SensorException e)
+			Sensor targetSensor=Sensor.getSensor(sensorTag);
+			if(targetSensor==null)
+				throw new SensorException(SensorException.SensorNotExist);
+			Sensor.deleteDO(targetSensor);
+		} catch (UserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (UserException e)
+		} catch (SensorException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally
 		{
+			Sensor.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

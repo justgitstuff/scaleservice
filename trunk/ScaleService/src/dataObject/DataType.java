@@ -39,7 +39,7 @@ public class DataType extends DOBase
 	    DataType d=null;
 		if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			try
 			{
 				d = pm.getObjectById(DataType.class, user.getNickname()+"."+typeName);
@@ -61,7 +61,7 @@ public class DataType extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(DataType.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
@@ -79,7 +79,7 @@ public class DataType extends DOBase
 	    User user = userService.getCurrentUser();
 		if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			try
 			{
 				DataType d=pm.getObjectById(DataType.class, user.getNickname()+"."+typeName);
@@ -141,7 +141,7 @@ public class DataType extends DOBase
 		    {
 		    	this.userNickname=user.getNickname();
 		    	this.dataTypeID=getDataTypeID();
-		    	PersistenceManager pm = getPersistentManager();
+		    	PersistenceManager pm = getPersistenceManager();
 				pm.makePersistent(this);
 		    }
 		    else
@@ -265,7 +265,7 @@ public class DataType extends DOBase
 		Operation iOperation;
 		if(lastSensorData.getValue()>this.maxCustom)//如果当前值超过了预定值
 		{
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Operation.class);
 			try
 			{
@@ -286,7 +286,7 @@ public class DataType extends DOBase
 		}
 		else if(lastSensorData.getValue()<this.minCustom)
 		{
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Operation.class);
 			try
 			{

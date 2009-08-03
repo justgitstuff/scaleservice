@@ -31,7 +31,7 @@ public class Scene extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Scene.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
@@ -58,7 +58,7 @@ public class Scene extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = getPersistentManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Scene.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
@@ -106,7 +106,7 @@ public class Scene extends DOBase
 		    	this.userNickname=user.getNickname();
 		    	Key id = KeyFactory.createKey(Scene.class.getSimpleName(),userNickname+"."+sceneName);
 		    	this.sceneID=id;
-				PersistenceManager pm = getPersistentManager();
+				PersistenceManager pm = getPersistenceManager();
 				pm.makePersistent(this);
 		    }
 		    else
@@ -131,9 +131,25 @@ public class Scene extends DOBase
 			throw new DeviceAndControlException(DeviceAndControlException.ControlIsNew);
 		this.controlID.add(control.getControlID());
 	}
+	public void removeSceneControl(Control control)
+	{
+		List<Control> allControl=this.getControl();
+		Iterator<Control> it=allControl.iterator();
+		int index=0;
+		while(it.hasNext())
+		{
+			if(it.next().equals(control))
+			{
+				controlID.remove(index);
+				return;
+			}
+			index++;
+		}
+		return;
+	}
 	public List<Control> getControl()
 	{
-		PersistenceManager pm = getPersistentManager();
+		PersistenceManager pm = getPersistenceManager();
 		List<Control> controlList=new ArrayList<Control>();
 		Iterator<Key> it=controlID.iterator();
 		while(it.hasNext()) 

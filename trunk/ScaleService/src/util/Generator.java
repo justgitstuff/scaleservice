@@ -187,6 +187,9 @@ public class Generator
 				{
 					Element controItem=XMLDoc.createElement("row");
 
+					Element deviceTag=XMLDoc.createElement("deviceTag");
+					deviceTag.appendChild(XMLDoc.createTextNode(e.getDevice().getDeviceTag()));
+					
 					Element command=XMLDoc.createElement("command");
 					command.appendChild(XMLDoc.createTextNode(e.getCommand()));
 					
@@ -196,6 +199,7 @@ public class Generator
 					Element action=XMLDoc.createElement("action");
 					action.appendChild(XMLDoc.createTextNode(e.getAction()));
 										
+					controItem.appendChild(deviceTag);
 					controItem.appendChild(command);
 					controItem.appendChild(parameter);
 					controItem.appendChild(action);

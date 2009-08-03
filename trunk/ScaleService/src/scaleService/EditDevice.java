@@ -27,7 +27,7 @@ public class EditDevice extends HttpServlet
 			if(targetDevice==null)
 				throw new DeviceAndControlException(DeviceAndControlException.DeviceNotExist);
 			targetDevice.setIntro(intro);
-			Device.closePersistentManager();
+			
 		} catch (UserException e)
 		{
 			// TODO Auto-generated catch block
@@ -38,6 +38,7 @@ public class EditDevice extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
+			Device.closePersistenceManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}
