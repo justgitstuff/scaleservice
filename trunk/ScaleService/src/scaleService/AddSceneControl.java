@@ -6,30 +6,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import util.Direction;
 import dataObject.Control;
-import dataObject.DataType;
 import dataObject.Device;
-import dataObject.Operation;
-import exception.DataTypeException;
+import dataObject.Scene;
 import exception.DeviceAndControlException;
-import exception.OperationException;
+import exception.SceneException;
 import exception.UserException;
 
-public class AddOperation extends HttpServlet
+public class AddSceneControl extends HttpServlet
 {
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3985639119689014897L;
+	private static final long serialVersionUID = 8053509545125831546L;
+
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
+		String sceneName = req.getParameter("sceneName");
 		String deviceTag = req.getParameter("deviceTag");
 		String command = req.getParameter("command");
 		String parameter = req.getParameter("parameter");
-		String typeName = req.getParameter("typeName");
-		String dir = req.getParameter("direction");
 		try
 		{
 			Device targetDevice=Device.getDevice(deviceTag);
@@ -38,19 +34,15 @@ public class AddOperation extends HttpServlet
 			Control control=targetDevice.getControl(command, parameter);
 			if(control==null)
 				throw new DeviceAndControlException(DeviceAndControlException.ControlNotExist);
-			DataType targetDataType=DataType.getDataType(typeName);
-			if(targetDataType==null)
-				throw new DataTypeException(DataTypeException.TypeNameNotExist);
-			Direction direction=dir.equalsIgnoreCase("up")?Direction.Up:Direction.Down;
-			Operation newOperation=new Operation(control.getControlID(), targetDataType.getDataTypeID(), direction);
-			newOperation.saveAsNew();
+			Scene targetScene=Scene.getScene(sceneName);
+			if(targetScene==null)
+				throw new SceneException(SceneException.SceneNotExist);
+			targetScene.addControl(control);
+			Scene.closePersistentManager();
 		} catch(DeviceAndControlException e)
 		{
 			e.printStackTrace();
-		} catch (DataTypeException e)
-		{
-			e.printStackTrace();
-		} catch (OperationException e)
+		} catch (SceneException e)
 		{
 			e.printStackTrace();
 		} catch (UserException e)

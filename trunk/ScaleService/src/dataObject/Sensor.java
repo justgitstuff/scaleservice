@@ -3,54 +3,71 @@ package dataObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
+import exception.DataTypeException;
 import exception.SensorException;
-import factory.PMF;
+import exception.UserException;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
-public class Sensor
+public class Sensor extends DOBase
 {
-	@SuppressWarnings("unchecked")
-	public static Sensor getSensor(String sensorTag)
+	public static Sensor getSensor(String sensorTag) throws UserException
 	{
-		Sensor returnSensor=null;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Sensor.class);
-		query.setFilter("sensorTag == st");
-		query.declareParameters("String st");
-		try
-		{
-			List<Sensor> results = (List<Sensor>) query.execute(sensorTag);
-			if (results.iterator().hasNext())
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistentManager();
+			try
 			{
-				returnSensor = results.iterator().next();
+				return pm.getObjectById(Sensor.class, user.getNickname()+"."+sensorTag);
+			}catch(JDOObjectNotFoundException e)
+			{
+				return null;
 			}
-		}finally
-		{
-			//noting to do
-		}
-		return returnSensor;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
 	}
 	@SuppressWarnings("unchecked")
-	public static List<Sensor> getSensor()
+	public static List<Sensor> getSensor() throws UserException
 	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Sensor.class);
-		List<Sensor> results = (List<Sensor>) query.execute();
-		return results;
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistentManager();
+			Query query = pm.newQuery(Sensor.class);
+			query.setFilter("userNickname == un");
+			query.declareParameters("String un");
+			List<Sensor> results = (List<Sensor>) query.execute(user.getNickname());
+			return results;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
 	}
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Persistent
 	private Key sensorID;
+	@Persistent
+	private String userNickname;
 	@Persistent
 	private String sensorTag;
 	@Persistent
@@ -64,7 +81,7 @@ public class Sensor
 	@Persistent
 	private String memo;
 	@Persistent
-	private List<DataType> dataType;
+	private List<Key> dataTypeID;
 	/**
 	 * @param location
 	 * @param manufacturer
@@ -83,29 +100,44 @@ public class Sensor
 		this.description = description;
 		this.memo = memo;
 		this.sensorTag = sensorTag;
-		this.dataType=new ArrayList<DataType>();
+		this.dataTypeID=new ArrayList<Key>();
 	}
 	/**
+	 * 添加一个dataType，如果该TypeName已存在，则覆盖之
 	 * @param sensorName
 	 * @param location
 	 * @param manufacturer
+	 * @throws UserException 
+	 * @throws DataTypeException 
 	 */
 	
-	public void addDataType(DataType dataType)
+	public void addDataType(DataType dataType) throws UserException, DataTypeException
 	{
-		this.dataType.add(dataType);
+		dataTypeID.add(dataType.getDataTypeID());
 	}
-	public List<DataType> getDataType()
-	{
-		return dataType;
-	}
-	public void saveAsNew() throws SensorException
+	/**
+	 * 自动加上用户属性，储存为新的传感器
+	 * @throws SensorException
+	 * @throws UserException
+	 */
+	public void saveAsNew() throws SensorException, UserException
 	{
 		if(Sensor.getSensor(this.sensorTag)==null && this.sensorID==null)
 		{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			pm.makePersistent(this);
-			pm.close();
+			UserService userService = UserServiceFactory.getUserService();
+		    User user = userService.getCurrentUser();
+		    if (user != null)
+		    {
+		    	this.userNickname=user.getNickname();
+		    	Key id = KeyFactory.createKey(Sensor.class.getSimpleName(),userNickname+"."+sensorTag);
+		    	this.sensorID=id;
+		    	PersistenceManager pm = getPersistentManager();
+				pm.makePersistent(this);
+		    }
+		    else
+		    {
+		    	throw new UserException(UserException.NotLogedIn);
+		    }
 		}
 		else if(this.sensorID!=null)
 		{
@@ -115,6 +147,17 @@ public class Sensor
 		{
 			throw new SensorException(SensorException.SensorAlreadyExist);
 		}
+	}
+	public List<Key> getDataType()
+	{
+		return dataTypeID;
+	}
+	/**
+	 * @return the userNickname
+	 */
+	public String getUserNickname()
+	{
+		return userNickname;
 	}
 	/**
 	 * @return the location
@@ -132,10 +175,20 @@ public class Sensor
 	}
 	/**
 	 * @return the sensorID
+	 * @throws UserException 
 	 */
-	public Key getSensorID()
+	public Key getSensorID() throws UserException
 	{
-		return sensorID;
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+		if(user!=null)
+		{
+			if(this.sensorID==null)
+				this.sensorID=KeyFactory.createKey(Sensor.class.getSimpleName(),userNickname+"."+sensorTag);
+			return sensorID;
+		}
+		else
+			throw new UserException(UserException.NotLogedIn);
 	}
 	/**
 	 * @return the sensorName
@@ -164,6 +217,13 @@ public class Sensor
 	public String getMemo()
 	{
 		return memo;
+	}
+	/**
+	 * @param userNickname the userNickname to set
+	 */
+	public void setUserNickname(String userNickname)
+	{
+		this.userNickname = userNickname;
 	}
 	/**
 	 * @param location the location to set

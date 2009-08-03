@@ -17,16 +17,16 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-import dataObject.Device;
+import dataObject.Scene;
 import exception.UserException;
 
-public class ViewDevice extends HttpServlet
+public class ViewScene extends HttpServlet
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4728912376782665126L;
+	private static final long serialVersionUID = -3588257038056885692L;
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException
 	{
@@ -34,9 +34,9 @@ public class ViewDevice extends HttpServlet
 		{
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element devices=Generator.buildDeviceXML(Device.getDeviceList());
+			Element sensors=Generator.buildSceneXML(Scene.getSceneList());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(devices); 
+			DOMSource source = new DOMSource(sensors); 
 			StreamResult result = new StreamResult(out);
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e)

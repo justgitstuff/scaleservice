@@ -7,9 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dataObject.DataType;
-import dataObject.Sensor;
-import exception.SensorException;
-import factory.PMF;
+import exception.DataTypeException;
+import exception.UserException;
 
 public class AddDataType extends HttpServlet
 {
@@ -26,18 +25,22 @@ public class AddDataType extends HttpServlet
 			String typeName = req.getParameter("typeName");
 			Double maxCustom = Double.parseDouble(req.getParameter("maxCustom"));
 			Double minCustom = Double.parseDouble(req.getParameter("minCustom"));
-			String sensorTag = req.getParameter("sensorTag");
-			DataType newDataType=new DataType(unit,typeName,maxCustom,minCustom);
-			Sensor targetSensor=Sensor.getSensor(sensorTag);
-			if(targetSensor==null)
-				throw new SensorException(SensorException.SensorNotExist);
-			targetSensor.addDataType(newDataType);
-		} catch(SensorException e)
+			DataType newDataType=DataType.getDataType(typeName);
+			if(newDataType!=null)
+				throw new DataTypeException(DataTypeException.TypeNameAlreadyExist); 
+			newDataType=new DataType(unit,typeName,maxCustom,minCustom);
+			newDataType.saveAsNew();
+		} catch (UserException e)
 		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DataTypeException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally
 		{
-			PMF.saveAndClose();
+			DataType.closePersistentManager();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

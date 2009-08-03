@@ -17,9 +17,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-
 import dataObject.Operation;
-import factory.PMF;
+import exception.UserException;
 
 public class ViewOperation extends HttpServlet
 {
@@ -52,9 +51,13 @@ public class ViewOperation extends HttpServlet
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally
 		{
-			PMF.saveAndClose();
+			//nothing
 		}
 	}
 }

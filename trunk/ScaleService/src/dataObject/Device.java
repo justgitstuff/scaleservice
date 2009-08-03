@@ -4,54 +4,70 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 import exception.DeviceAndControlException;
-import factory.PMF;
+import exception.UserException;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
-public class Device
+public class Device extends DOBase
 {
-	@SuppressWarnings("unchecked")
-	public static Device getDevice(String deviceTag)
+	public static Device getDevice(String deviceTag) throws UserException
 	{
-		Device returnDevice=null;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Device.class);
-		query.setFilter("deviceTag == dt");
-		query.declareParameters("String dt");
-		try
-		{
-			List<Device> results = (List<Device>) query.execute(deviceTag);
-			if (results.iterator().hasNext())
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistentManager();
+			try
 			{
-				returnDevice = results.iterator().next();
+				return pm.getObjectById(Device.class, user.getNickname()+"."+deviceTag);
+			}catch(JDOObjectNotFoundException e)
+			{
+				return null;
 			}
-		}finally
-		{
-			//noting to do
-		}
-		return returnDevice;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
 	}
 	@SuppressWarnings("unchecked")
-	public static List<Device> getDeviceList()
+	public static List<Device> getDeviceList() throws UserException
 	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Device.class);
-		List<Device> results = (List<Device>) query.execute();
-		return results;
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistentManager();
+			Query query = pm.newQuery(Device.class);
+			query.setFilter("userNickname == un");
+			query.declareParameters("String un");
+			List<Device> results = (List<Device>) query.execute(user.getNickname());
+			return results;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
 	}
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Persistent
 	private Key deviceID;
+	@Persistent
+	private String userNickname;
 	@Persistent
 	private String deviceTag;
 	@Persistent
@@ -71,6 +87,34 @@ public class Device
 		this.intro = intro;
 		this.currentState="Unknown";
 		this.control=new ArrayList<Control>();
+	}
+	public void saveAsNew() throws DeviceAndControlException, UserException
+	{
+		if(Device.getDevice(this.deviceTag)==null && this.deviceID==null)
+		{
+			UserService userService = UserServiceFactory.getUserService();
+		    User user = userService.getCurrentUser();
+		    if (user != null)
+		    {
+		    	this.userNickname=user.getNickname();
+		    	Key id = KeyFactory.createKey(Device.class.getSimpleName(),userNickname+"."+deviceTag);
+		    	this.deviceID=id;
+		    	PersistenceManager pm = getPersistentManager();
+				pm.makePersistent(this);
+		    }
+		    else
+		    {
+		    	throw new UserException(UserException.NotLogedIn);
+		    }
+		}
+		else if(this.deviceID!=null)
+		{
+			throw new DeviceAndControlException(DeviceAndControlException.PrimaryKeyNotNull);
+		}
+		else
+		{
+			throw new DeviceAndControlException(DeviceAndControlException.DeviceAlreadyExist);
+		}
 	}
 	public void addControl(Control control) throws DeviceAndControlException
 	{
@@ -94,25 +138,16 @@ public class Device
 		else
 			this.control.add(control);
 	}
-	public List<Control> getControl()
-	{
-		return control;
-	}
-	@SuppressWarnings("unchecked")
 	public Control getControl(String command,String parameter)
 	{
 		Control returnControl=null;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(Control.class);
 		Control iControl;
 		try
 		{
-			List<Control> results = (List<Control>) query.execute();
-			Iterator<Control> it=results.iterator(); 
+			Iterator<Control> it=this.control.iterator(); 
 			while(it.hasNext())
 			{
 				iControl=it.next();
-				iControl.setDevice(pm.getObjectById(Device.class, iControl.getDevice().getDeviceID()));
 				if(iControl.getDevice().equals(this) && iControl.getCommand().equals(command) && iControl.getParameter().equals(parameter))
 				{
 					returnControl=iControl;
@@ -125,21 +160,9 @@ public class Device
 		}
 		return returnControl;
 	}
-	public void saveAsNew() throws DeviceAndControlException
+	public List<Control> getControl()
 	{
-		if(Device.getDevice(deviceTag)==null && this.deviceID==null)
-		{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			pm.makePersistent(this);
-		}
-		else if(this.deviceID!=null)
-		{
-			throw new DeviceAndControlException(DeviceAndControlException.PrimaryKeyNotNull);
-		}
-		else
-		{
-			throw new DeviceAndControlException(DeviceAndControlException.DeviceAlreadyExist);
-		}
+		return control;
 	}
 	/**
 	 * @return the deviceTag
@@ -157,10 +180,20 @@ public class Device
 	}
 	/**
 	 * @return the deviceID
+	 * @throws UserException 
 	 */
-	public Key getDeviceID()
+	public Key getDeviceID() throws UserException
 	{
-		return deviceID;
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+		if(user!=null)
+		{
+			if(deviceID==null)
+				this.deviceID = KeyFactory.createKey(Device.class.getSimpleName(),userNickname+"."+deviceTag);
+			return deviceID;
+		}
+		else
+			throw new UserException(UserException.NotLogedIn);
 	}
 	/**
 	 * @return the currentState
@@ -203,5 +236,19 @@ public class Device
 			return true;
 		else
 			return false;
+	}
+	/**
+	 * @return the userNickname
+	 */
+	public String getUserNickname()
+	{
+		return userNickname;
+	}
+	/**
+	 * @param userNickname the userNickname to set
+	 */
+	public void setUserNickname(String userNickname)
+	{
+		this.userNickname = userNickname;
 	}
 }
