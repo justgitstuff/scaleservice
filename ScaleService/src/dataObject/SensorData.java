@@ -20,6 +20,8 @@ public class SensorData
 	private double value;
 	@Persistent
 	private Date time;
+	@Persistent(mappedBy = "sensorData")
+	private DataType dataType;
 	/**
 	 * @param d
 	 * @param date
@@ -70,6 +72,20 @@ public class SensorData
 	public void setTime(Date time)
 	{
 		this.time = time;
+	}
+	/**
+	 * @return the dataType
+	 */
+	public DataType getDataType()
+	{
+		return dataType;
+	}
+	/**
+	 * @param dataType the dataType to set
+	 */
+	public void setDataType(DataType dataType)
+	{
+		this.dataType = dataType;
 	}
 	
 }

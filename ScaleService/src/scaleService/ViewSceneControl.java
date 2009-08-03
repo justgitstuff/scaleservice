@@ -17,26 +17,30 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-import dataObject.Device;
+import dataObject.Scene;
+import exception.SceneException;
 import exception.UserException;
 
-public class ViewDevice extends HttpServlet
+public class ViewSceneControl extends HttpServlet
 {
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4728912376782665126L;
-	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws IOException
+	private static final long serialVersionUID = 2676632169893075242L;
+
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		try
 		{
+			String sceneName = req.getParameter("sceneName");
+			Scene targetScene=Scene.getScene(sceneName);
+			if(targetScene==null)
+				throw new SceneException(SceneException.SceneNotExist);
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element devices=Generator.buildDeviceXML(Device.getDeviceList());
+			Element control=Generator.buildControlXML(targetScene.getControl());
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(devices); 
+			DOMSource source = new DOMSource(control); 
 			StreamResult result = new StreamResult(out);
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e)
@@ -55,7 +59,11 @@ public class ViewDevice extends HttpServlet
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally
+		} catch (SceneException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally
 		{
 			//nothing
 		}

@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import dataObject.Device;
 import exception.DeviceAndControlException;
+import exception.UserException;
 import factory.ControlFactory;
-import factory.PMF;
 
 public class AddControl extends HttpServlet
 {
@@ -33,9 +33,12 @@ public class AddControl extends HttpServlet
 		} catch(DeviceAndControlException e)
 		{
 			e.printStackTrace();
+		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally
 		{
-			PMF.saveAndClose();
 			resp.sendRedirect("/index.jsp");
 		}
 	}

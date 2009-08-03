@@ -9,12 +9,20 @@
 		<servlet-class>scaleService.AddSensor</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>editSensor</servlet-name>
+		<servlet-class>scaleService.EditSensor</servlet-class>
+	</servlet>
+	<servlet>
         <servlet-name>viewSensor</servlet-name>
         <servlet-class>scaleService.ViewSensor</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>addDataType</servlet-name>
         <servlet-class>scaleService.AddDataType</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>editDataType</servlet-name>
+        <servlet-class>scaleService.EditDataType</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewDataType</servlet-name>
@@ -31,6 +39,10 @@
     <servlet>
         <servlet-name>addDevice</servlet-name>
         <servlet-class>scaleService.AddDevice</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>editDevice</servlet-name>
+        <servlet-class>scaleService.EditDevice</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewDevice</servlet-name>
@@ -56,6 +68,27 @@
         <servlet-name>viewToDo</servlet-name>
         <servlet-class>scaleService.ViewToDo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>addScene</servlet-name>
+        <servlet-class>scaleService.AddScene</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewScene</servlet-name>
+        <servlet-class>scaleService.ViewScene</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addSceneControl</servlet-name>
+        <servlet-class>scaleService.AddSceneControl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addSceneKeyWord</servlet-name>
+        <servlet-class>scaleService.AddSceneKeyWord</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewSceneControl</servlet-name>
+        <servlet-class>scaleService.ViewSceneControl</servlet-class>
+    </servlet>
+    
     
     
     
@@ -64,12 +97,20 @@
 		<url-pattern>/add_sensor</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>editSensor</servlet-name>
+		<url-pattern>/edit_sensor</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
         <servlet-name>viewSensor</servlet-name>
         <url-pattern>/view_sensor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addDataType</servlet-name>
         <url-pattern>/add_dataType</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>editDataType</servlet-name>
+        <url-pattern>/edit_dataType</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>viewDataType</servlet-name>
@@ -86,6 +127,10 @@
     <servlet-mapping>
         <servlet-name>addDevice</servlet-name>
         <url-pattern>/add_device</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>editDevice</servlet-name>
+        <url-pattern>/edit_device</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>viewDevice</servlet-name>
@@ -114,4 +159,24 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+	<servlet-mapping>
+        <servlet-name>addScene</servlet-name>
+        <url-pattern>/add_scene</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewScene</servlet-name>
+        <url-pattern>/view_scene</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addSceneControl</servlet-name>
+        <url-pattern>/add_sceneControl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addSceneKeyWord</servlet-name>
+        <url-pattern>/add_sceneKeyWord</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewSceneControl</servlet-name>
+        <url-pattern>/view_sceneControl</url-pattern>
+    </servlet-mapping>
 </web-app>

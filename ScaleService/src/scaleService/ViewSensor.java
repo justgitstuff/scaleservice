@@ -20,9 +20,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-
 import dataObject.Sensor;
-import factory.PMF;
+import exception.UserException;
 
 /**
  * @author ÕıÕ¨÷€
@@ -34,7 +33,7 @@ public class ViewSensor extends HttpServlet
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -40117953954131465L;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException
@@ -60,9 +59,13 @@ public class ViewSensor extends HttpServlet
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally
 		{
-			PMF.saveAndClose();
+			//nothing
 		}
 	}
 }

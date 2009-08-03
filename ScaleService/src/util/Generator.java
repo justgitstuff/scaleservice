@@ -17,6 +17,7 @@ import dataObject.Control;
 import dataObject.DataType;
 import dataObject.Device;
 import dataObject.Operation;
+import dataObject.Scene;
 import dataObject.Sensor;
 import dataObject.SensorData;
 
@@ -312,4 +313,45 @@ public class Generator
 		}
 		return root;
 	}
+	public static Element buildSceneXML(List<Scene> sceneList)
+	{
+		DocumentBuilder db;
+		try
+		{
+			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		}
+		catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		Document XMLDoc=db.newDocument();
+		Element root=XMLDoc.createElement("scenes");
+		try
+		{
+			if (sceneList.iterator().hasNext())
+			{
+				for (Scene e : sceneList)
+				{
+					Element sceneItem=XMLDoc.createElement("row");
+
+					Element sceneName=XMLDoc.createElement("sceneName");
+					sceneName.appendChild(XMLDoc.createTextNode(e.getSceneName()));
+					
+					Element keyWord=XMLDoc.createElement("keyWord");
+					keyWord.appendChild(XMLDoc.createTextNode(e.getKeyWord().toString()));
+					
+					sceneItem.appendChild(sceneName);
+					sceneItem.appendChild(keyWord);
+					root.appendChild(sceneItem);
+				}
+			}
+		}
+		finally
+		{
+			//do nothing
+		}
+		return root;
+	}
+	
 }
