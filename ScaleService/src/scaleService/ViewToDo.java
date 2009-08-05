@@ -27,6 +27,10 @@ public class ViewToDo extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = -939617794703400960L;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		doGet(req,resp);
+	}
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 	throws IOException
 	{

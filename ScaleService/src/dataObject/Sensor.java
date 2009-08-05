@@ -1,6 +1,5 @@
 package dataObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -17,7 +16,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import exception.DataTypeException;
 import exception.SensorException;
 import exception.UserException;
 
@@ -81,7 +79,7 @@ public class Sensor extends DOBase
 	@Persistent
 	private String memo;
 	@Persistent
-	private List<Key> dataTypeID;
+	private String typeName;
 	/**
 	 * @param location
 	 * @param manufacturer
@@ -100,7 +98,7 @@ public class Sensor extends DOBase
 		this.description = description;
 		this.memo = memo;
 		this.sensorTag = sensorTag;
-		this.dataTypeID=new ArrayList<Key>();
+		this.typeName=null;
 	}
 	/**
 	 * 添加一个dataType，如果该TypeName已存在，则覆盖之
@@ -111,10 +109,6 @@ public class Sensor extends DOBase
 	 * @throws DataTypeException 
 	 */
 	
-	public void addDataType(DataType dataType) throws UserException, DataTypeException
-	{
-		dataTypeID.add(dataType.getDataTypeID());
-	}
 	/**
 	 * 自动加上用户属性，储存为新的传感器
 	 * @throws SensorException
@@ -147,10 +141,6 @@ public class Sensor extends DOBase
 		{
 			throw new SensorException(SensorException.SensorAlreadyExist);
 		}
-	}
-	public List<Key> getDataType()
-	{
-		return dataTypeID;
 	}
 	/**
 	 * @return the userNickname
@@ -280,5 +270,19 @@ public class Sensor extends DOBase
 			return true;
 		else
 			return false;
+	}
+	/**
+	 * @return the typeName
+	 */
+	public String getTypeName()
+	{
+		return typeName;
+	}
+	/**
+	 * @param typeName the typeName to set
+	 */
+	public void setTypeName(String typeName)
+	{
+		this.typeName = typeName;
 	}
 }

@@ -2,6 +2,7 @@ package scaleService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,56 +18,36 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-
 import dataObject.Control;
-import dataObject.Device;
-import dataObject.Scene;
-import exception.DeviceAndControlException;
-import exception.SceneException;
+import dataObject.ControlCollection;
+import dataObject.Operation;
 import exception.UserException;
 
-public class DeleteSceneControl extends HttpServlet
+public class ViewManualAndAuto extends HttpServlet
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4318918788964576204L;
-
+	private static final long serialVersionUID = 3308409188336558524L;
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String sceneName = req.getParameter("sceneName");
-		String deviceTag = req.getParameter("deviceTag");
-		String command = req.getParameter("command");
-		String parameter = req.getParameter("parameter");
+		doGet(req,resp);
+	}
+	public void doGet(HttpServletRequest req, HttpServletResponse resp)
+	throws IOException
+	{
 		try
 		{
-			Device targetDevice=Device.getDevice(deviceTag);
-			if(targetDevice==null)
-				throw new DeviceAndControlException(DeviceAndControlException.DeviceNotExist);
-			Control control=targetDevice.getControl(command, parameter);
-			if(control==null)
-				throw new DeviceAndControlException(DeviceAndControlException.ControlNotExist);
-			Scene targetScene=Scene.getScene(sceneName);
-			if(targetScene==null)
-				throw new SceneException(SceneException.SceneNotExist);
-			targetScene.removeSceneControl(control);
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
-			Element rc=Generator.buildActionReturn(Generator.SUCCESS);
+			ControlCollection cc=ControlCollection.getControlCollection();
+			List<Control> ret=Operation.findAllControl();
+			ret.addAll(cc.getControl());
+			Element operation=Generator.buildControlXML(ret);
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(rc); 
+			DOMSource source = new DOMSource(operation); 
 			StreamResult result = new StreamResult(out);
 			transformer.transform(source, result);
-		} catch(DeviceAndControlException e)
-		{
-			e.printStackTrace();
-		} catch (SceneException e)
-		{
-			e.printStackTrace();
-		} catch (UserException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (TransformerConfigurationException e)
 		{
 			// TODO Auto-generated catch block
@@ -79,9 +60,13 @@ public class DeleteSceneControl extends HttpServlet
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally
 		{
-			Scene.closePersistenceManager();
+			//nothing
 		}
 	}
 }

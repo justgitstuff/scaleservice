@@ -27,6 +27,10 @@ public class ViewDevice extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = -4728912376782665126L;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		doGet(req,resp);
+	}
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException
 	{

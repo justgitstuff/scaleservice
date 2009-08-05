@@ -27,6 +27,10 @@ public class ViewScene extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = -3588257038056885692L;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		doGet(req,resp);
+	}
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException
 	{

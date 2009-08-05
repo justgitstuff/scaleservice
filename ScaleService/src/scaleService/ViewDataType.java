@@ -2,6 +2,8 @@ package scaleService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.w3c.dom.Element;
 
 import util.Generator;
 import dataObject.DataType;
+import exception.DataTypeException;
 import exception.UserException;
 
 public class ViewDataType extends HttpServlet
@@ -27,17 +30,40 @@ public class ViewDataType extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = -9068971802042730116L;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		doGet(req,resp);
+	}
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		try
 		{
-			resp.setContentType("text/html;charset=gb2312");
-			PrintWriter out=resp.getWriter();
-			Element dataType=Generator.buildDataTypeXML(DataType.getDataType());
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(dataType); 
-			StreamResult result = new StreamResult(out);
-			transformer.transform(source, result);
+			String typeName = req.getParameter("typeName");
+			if(typeName==null)
+			{
+				resp.setContentType("text/html;charset=gb2312");
+				PrintWriter out=resp.getWriter();
+				Element dataType=Generator.buildDataTypeXML(DataType.getDataType());
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				DOMSource source = new DOMSource(dataType); 
+				StreamResult result = new StreamResult(out);
+				transformer.transform(source, result);
+			}
+			else
+			{
+				DataType targetDataType=DataType.getDataType(typeName);
+				if(targetDataType==null)
+					throw new DataTypeException(DataTypeException.DataTypeNotFonund);
+				List<DataType> DataTypeInfo=new ArrayList<DataType>();
+				DataTypeInfo.add(targetDataType);
+				resp.setContentType("text/html;charset=gb2312");
+				PrintWriter out=resp.getWriter();
+				Element dataType=Generator.buildDataTypeXML(DataTypeInfo);
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				DOMSource source = new DOMSource(dataType); 
+				StreamResult result = new StreamResult(out);
+				transformer.transform(source, result);
+			}
 		} catch (TransformerConfigurationException e)
 		{
 			// TODO Auto-generated catch block
@@ -51,6 +77,10 @@ public class ViewDataType extends HttpServlet
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DataTypeException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -21,6 +21,10 @@
         <servlet-class>scaleService.DeleteSensor</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>registerSensor</servlet-name>
+        <servlet-class>scaleService.RegisterSensor</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>addDataType</servlet-name>
         <servlet-class>scaleService.AddDataType</servlet-class>
     </servlet>
@@ -89,6 +93,10 @@
         <servlet-class>scaleService.ViewScene</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>enterScene</servlet-name>
+        <servlet-class>scaleService.EnterScene</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>deleteScene</servlet-name>
         <servlet-class>scaleService.DeleteScene</servlet-class>
     </servlet>
@@ -108,6 +116,19 @@
         <servlet-name>deleteSceneControl</servlet-name>
         <servlet-class>scaleService.DeleteSceneControl</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>addManual</servlet-name>
+        <servlet-class>scaleService.AddManual</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewManual</servlet-name>
+        <servlet-class>scaleService.ViewManual</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewManualAndAuto</servlet-name>
+        <servlet-class>scaleService.ViewManualAndAuto</servlet-class>
+    </servlet>
+    
     
     
     
@@ -128,6 +149,10 @@
     <servlet-mapping>
         <servlet-name>deleteSensor</servlet-name>
         <url-pattern>/delete_sensor</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>registerSensor</servlet-name>
+        <url-pattern>/register_sensor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addDataType</servlet-name>
@@ -198,6 +223,10 @@
         <url-pattern>/view_scene</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>enterScene</servlet-name>
+        <url-pattern>/enter_scene</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>deleteScene</servlet-name>
         <url-pattern>/delete_scene</url-pattern>
     </servlet-mapping>
@@ -216,6 +245,18 @@
     <servlet-mapping>
         <servlet-name>deleteSceneControl</servlet-name>
         <url-pattern>/delete_sceneControl</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addManual</servlet-name>
+        <url-pattern>/add_manual</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewManual</servlet-name>
+        <url-pattern>/view_manual</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewManualAndAuto</servlet-name>
+        <url-pattern>/view_manualAndAuto</url-pattern>
     </servlet-mapping>
     
     <welcome-file-list>
