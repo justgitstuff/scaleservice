@@ -35,6 +35,10 @@ public class ViewSensorData extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = 5860545035968418134L;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
+	{
+		doGet(req,resp);
+	}
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		try

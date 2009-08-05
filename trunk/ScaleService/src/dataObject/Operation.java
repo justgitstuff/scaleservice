@@ -25,7 +25,7 @@ import exception.UserException;
 import factory.PMF;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
-public class Operation
+public class Operation extends DOBase
 {
 	public static Operation getOperation(Key controlID,Key dataTypeID) throws UserException
 	{
@@ -105,7 +105,6 @@ public class Operation
 		    	this.operationID=id;
 		    	PersistenceManager pm = PMF.get().getPersistenceManager();
 				pm.makePersistent(this);
-				pm.close();
 		    }
 		    else
 		    	throw new UserException(UserException.NotLogedIn);
@@ -144,6 +143,37 @@ public class Operation
 		return direction;
 	}
 	/**
+	 * @return the controlID
+	 */
+	public Key getControlID()
+	{
+		return controlID;
+	}
+	public Control getControl()
+	{
+		PersistenceManager pm = getPersistenceManager();
+		return pm.getObjectById(Control.class, controlID);
+	}
+	/**
+	 * @return the dataTypeID
+	 */
+	public Key getDataTypeID()
+	{
+		return dataTypeID;
+	}
+	public DataType getDataType()
+	{
+		PersistenceManager pm = getPersistenceManager();
+		return pm.getObjectById(DataType.class, dataTypeID);
+	}
+	/**
+	 * @return the userNickname
+	 */
+	public String getUserNickname()
+	{
+		return userNickname;
+	}
+	/**
 	 * @param operationID the operationID to set
 	 */
 	public void setOperationID(Key operationID)
@@ -156,37 +186,6 @@ public class Operation
 	public void setDirection(Direction direction)
 	{
 		this.direction = direction;
-	}
-	public boolean equals(Operation o)
-	{
-		if(o.controlID.equals(this.controlID) && o.dataTypeID.equals(this.dataTypeID))
-			return true;
-		else
-			return false;
-	}
-	/**
-	 * @return the controlID
-	 */
-	public Key getControlID()
-	{
-		return controlID;
-	}
-	public Control getControl()
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		return pm.getObjectById(Control.class, controlID);
-	}
-	/**
-	 * @return the dataTypeID
-	 */
-	public Key getDataTypeID()
-	{
-		return dataTypeID;
-	}
-	public DataType getDataType()
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		return pm.getObjectById(DataType.class, dataTypeID);
 	}
 	/**
 	 * @param controlID the controlID to set
@@ -201,6 +200,13 @@ public class Operation
 	public void setDataTypeID(Key dataTypeID)
 	{
 		this.dataTypeID = dataTypeID;
+	}
+	/**
+	 * @param userNickname the userNickname to set
+	 */
+	public void setUserNickname(String userNickname)
+	{
+		this.userNickname = userNickname;
 	}
 	/**
 	 * 获取所有DataType中的解决方案，写入一个List中
@@ -224,18 +230,22 @@ public class Operation
 		}
 		return allToDo;
 	}
-	/**
-	 * @return the userNickname
-	 */
-	public String getUserNickname()
+	public static List<Control> findAllControl() throws UserException
 	{
-		return userNickname;
+		List<Operation> fao=findAllToDo();
+		List<Control> ret=new ArrayList<Control>();
+		Iterator<Operation> it=fao.iterator();
+		while(it.hasNext())
+		{
+			ret.add(it.next().getControl());
+		}
+		return ret;
 	}
-	/**
-	 * @param userNickname the userNickname to set
-	 */
-	public void setUserNickname(String userNickname)
+	public boolean equals(Operation o)
 	{
-		this.userNickname = userNickname;
+		if(o.controlID.equals(this.controlID) && o.dataTypeID.equals(this.dataTypeID))
+			return true;
+		else
+			return false;
 	}
 }

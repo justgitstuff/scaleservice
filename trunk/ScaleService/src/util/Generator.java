@@ -27,6 +27,28 @@ import dataObject.SensorData;
  */
 public class Generator
 {
+	public static final int SUCCESS=1;
+	public static Element buildActionReturn(int returnCode)
+	{
+		DocumentBuilder db;
+		try
+		{
+			db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		}
+		catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		Document XMLDoc=db.newDocument();
+		Element root=XMLDoc.createElement("operation");
+		Element actionReturn=XMLDoc.createElement("actionReturn");
+		actionReturn.appendChild(XMLDoc.createTextNode(String.valueOf(returnCode)));
+		
+		root.appendChild(actionReturn);
+		
+		return root;
+	}
 	public static Element buildOperationXML(List<Operation> OperationList)
 	{
 		DocumentBuilder db;
@@ -53,21 +75,29 @@ public class Generator
 					Element deviceTag=XMLDoc.createElement("deviceTag");
 					deviceTag.appendChild(XMLDoc.createTextNode(e.getControl().getDevice().getDeviceTag()));
 					
+					Element intro=XMLDoc.createElement("intro");
+					intro.appendChild(XMLDoc.createTextNode(e.getControl().getDevice().getIntro()));
+					
 					Element controlCommand=XMLDoc.createElement("control_command");
 					controlCommand.appendChild(XMLDoc.createTextNode(e.getControl().getCommand()));
 					
 					Element controlParam=XMLDoc.createElement("control_parameter");
 					controlParam.appendChild(XMLDoc.createTextNode(e.getControl().getParameter()));
 					
-					Element dataTypeID=XMLDoc.createElement("dataTypeID");
+					Element controlAction=XMLDoc.createElement("control_action");
+					controlAction.appendChild(XMLDoc.createTextNode(e.getControl().getAction()));
+					
+					Element dataTypeID=XMLDoc.createElement("typeName");
 					dataTypeID.appendChild(XMLDoc.createTextNode(e.getDataType().getTypeName()));
 					
 					Element direction=XMLDoc.createElement("direction");
 					direction.appendChild(XMLDoc.createTextNode(e.getDirection().toString()));
 					
 					operationItem.appendChild(deviceTag);
+					operationItem.appendChild(intro);
 					operationItem.appendChild(controlCommand);
 					operationItem.appendChild(controlParam);
+					operationItem.appendChild(controlAction);
 					operationItem.appendChild(dataTypeID);
 					operationItem.appendChild(direction);
 					root.appendChild(operationItem);
@@ -190,6 +220,9 @@ public class Generator
 					Element deviceTag=XMLDoc.createElement("deviceTag");
 					deviceTag.appendChild(XMLDoc.createTextNode(e.getDevice().getDeviceTag()));
 					
+					Element intro=XMLDoc.createElement("intro");
+					intro.appendChild(XMLDoc.createTextNode(e.getDevice().getIntro()));
+					
 					Element command=XMLDoc.createElement("command");
 					command.appendChild(XMLDoc.createTextNode(e.getCommand()));
 					
@@ -200,6 +233,7 @@ public class Generator
 					action.appendChild(XMLDoc.createTextNode(e.getAction()));
 										
 					controItem.appendChild(deviceTag);
+					controItem.appendChild(intro);
 					controItem.appendChild(command);
 					controItem.appendChild(parameter);
 					controItem.appendChild(action);
@@ -242,6 +276,19 @@ public class Generator
 					Element typeName=XMLDoc.createElement("typeName");
 					typeName.appendChild(XMLDoc.createTextNode(e.getTypeName()));
 					
+					SensorData lastSensorData=e.getLastSensorData();
+					Element value=XMLDoc.createElement("value");
+					Element time=XMLDoc.createElement("time");
+					if(lastSensorData==null)
+					{
+						value.appendChild(XMLDoc.createTextNode("No Data"));
+						time.appendChild(XMLDoc.createTextNode("Unknown"));
+					}
+					else
+					{
+						value.appendChild(XMLDoc.createTextNode(String.valueOf(e.getLastSensorData().getValue())));
+						time.appendChild(XMLDoc.createTextNode(e.getLastSensorData().getTime().toString()));
+					}
 					Element maxCustom=XMLDoc.createElement("maxCustom");
 					maxCustom.appendChild(XMLDoc.createTextNode(e.getMaxCustom().toString()));
 					
@@ -250,6 +297,8 @@ public class Generator
 					
 					dataTypeItem.appendChild(unit);
 					dataTypeItem.appendChild(typeName);
+					dataTypeItem.appendChild(value);
+					dataTypeItem.appendChild(time);
 					dataTypeItem.appendChild(maxCustom);
 					dataTypeItem.appendChild(minCustom);
 					root.appendChild(dataTypeItem);
@@ -301,12 +350,19 @@ public class Generator
 					Element memo=XMLDoc.createElement("memo");
 					memo.appendChild(XMLDoc.createTextNode(e.getMemo()));
 					
+					Element typeName=XMLDoc.createElement("typeName");
+					if(e.getTypeName()!=null)
+						typeName.appendChild(XMLDoc.createTextNode(e.getTypeName()));
+					else
+						typeName.appendChild(XMLDoc.createTextNode("(Not In Network)"));
+						
 					sensorItem.appendChild(sensorTag);
 					sensorItem.appendChild(sensorName);
 					sensorItem.appendChild(location);
 					sensorItem.appendChild(manufacturer);
 					sensorItem.appendChild(description);
 					sensorItem.appendChild(memo);
+					sensorItem.appendChild(typeName);
 					root.appendChild(sensorItem);
 				}
 			}

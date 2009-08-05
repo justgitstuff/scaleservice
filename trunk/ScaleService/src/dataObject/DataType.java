@@ -262,6 +262,8 @@ public class DataType extends DOBase
 	{
 		SensorData lastSensorData=getLastSensorData();
 		List<Operation> todo=new ArrayList<Operation>();
+		if(lastSensorData==null)
+			return todo;
 		Operation iOperation;
 		if(lastSensorData.getValue()>this.maxCustom)//如果当前值超过了预定值
 		{

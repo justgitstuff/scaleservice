@@ -42,7 +42,11 @@ public class Scene extends DOBase
 			{
 				iScene=it.next();
 				if(iScene.getSceneName().equals(sceneName))
+				{
+					if(iScene.getControlID()==null)
+						iScene.setControlID(new ArrayList<Key>());
 					return iScene;
+				}
 			}
 	    }
 	    else
@@ -121,6 +125,11 @@ public class Scene extends DOBase
 			throw new SceneException(SceneException.SceneAlreadyExist);
 		}
 	}
+	public void enterScene() throws UserException, DeviceAndControlException
+	{
+		ControlCollection cc=ControlCollection.getControlCollection();
+		cc.addControl(getControl());
+	}
 	public void addControl(Key controlID)
 	{
 		this.controlID.add(controlID);
@@ -130,6 +139,10 @@ public class Scene extends DOBase
 		if(control.getControlID()==null)
 			throw new DeviceAndControlException(DeviceAndControlException.ControlIsNew);
 		this.controlID.add(control.getControlID());
+	}
+	public void addKeyWord(String keyWord)
+	{
+		this.keyWord.add(keyWord);
 	}
 	public void removeSceneControl(Control control)
 	{
@@ -146,6 +159,13 @@ public class Scene extends DOBase
 			index++;
 		}
 		return;
+	}
+	/**
+	 * @return the userNickname
+	 */
+	public String getUserNickname()
+	{
+		return userNickname;
 	}
 	public List<Control> getControl()
 	{
@@ -217,10 +237,6 @@ public class Scene extends DOBase
 	{
 		this.keyWord = keyWord;
 	}
-	public void addKeyWord(String keyWord)
-	{
-		this.keyWord.add(keyWord);
-	}
 	/**
 	 * @param controlID the operationID to set
 	 */
@@ -228,25 +244,18 @@ public class Scene extends DOBase
 	{
 		this.controlID = controlID;
 	}
-	public boolean equals(Scene s)
-	{
-		if(sceneName.equals(s.getSceneName()))
-			return true;
-		else
-			return false;
-	}
-	/**
-	 * @return the userNickname
-	 */
-	public String getUserNickname()
-	{
-		return userNickname;
-	}
 	/**
 	 * @param userNickname the userNickname to set
 	 */
 	public void setUserNickname(String userNickname)
 	{
 		this.userNickname = userNickname;
+	}
+	public boolean equals(Scene s)
+	{
+		if(sceneName.equals(s.getSceneName()))
+			return true;
+		else
+			return false;
 	}
 }

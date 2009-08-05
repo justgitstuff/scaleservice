@@ -13,42 +13,69 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 import exception.DeviceAndControlException;
-import exception.OperationException;
 import exception.UserException;
-import factory.PMF;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class ControlCollection
+public class ControlCollection extends DOBase
 {
 	@SuppressWarnings("unchecked")
-	public ControlCollection getControlCollection()
+	public static ControlCollection getControlCollection() throws UserException
 	{
-		ControlCollection returnControlCollection=null;
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Query query = pm.newQuery(ControlCollection.class);
-		try
-		{
-			List<ControlCollection> results = (List<ControlCollection>) query.execute();
-			if (results.iterator().hasNext())
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    ControlCollection d=null;
+		if (user != null)
+	    {
+			PersistenceManager pm = getPersistenceManager();
+			Query query = pm.newQuery(ControlCollection.class);
+			query.setFilter("userNickname == un");
+			query.declareParameters("String un");
+			List<ControlCollection> dl = (List<ControlCollection>) query.execute(user.getNickname());
+			if(dl.iterator().hasNext())
 			{
-				returnControlCollection = results.iterator().next();
+				d=dl.iterator().next();
+				if(d.controlList==null)
+					d.controlList=new ArrayList<Key>();
 			}
-		}finally
-		{
-			//TODO ControlCollection之类的用户机制
-		}
-		return returnControlCollection;
+			else
+			{
+				d = new ControlCollection();
+				pm.makePersistent(d);
+			}
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
+		return d;
 	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key controlCollectionID;
 	@Persistent
-	private List<Control> controlList;
-	public ControlCollection()
+	private String userNickname;
+	@Persistent
+	private List<Key> controlList;
+	public ControlCollection() throws UserException
 	{
-		//Init
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+	    	this.controlCollectionID=KeyFactory.createKey(ControlCollection.class.getSimpleName(), user.getNickname());
+	    	this.userNickname=user.getNickname();
+	    	controlList=new ArrayList<Key>();
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
 	}
 	/**
 	 * 将Control插入待执行列表中
@@ -58,22 +85,24 @@ public class ControlCollection
 	 */
 	public boolean addControl(Control control) throws DeviceAndControlException
 	{
+		PersistenceManager pm = getPersistenceManager();
 		if(control==null)
 			throw new DeviceAndControlException(DeviceAndControlException.ControlNotExist);
-		Iterator<Control> it=controlList.iterator();
+		Iterator<Key> it=controlList.iterator();
 		while(it.hasNext())
 		{
-			if(it.next().equals(control))
+			if(pm.getObjectById(Control.class, it.next()).equals(control))
 				return false;
 		}
-		controlList.add(control);
+		controlList.add(control.getControlID());
 		return true;
 	}
 	public boolean addControl(List<Control> controlList) throws DeviceAndControlException
 	{
+		PersistenceManager pm = getPersistenceManager();
 		boolean hasRepeat=false;
 		boolean iRepeat;
-		Iterator<Control> itc;
+		Iterator<Key> itc;
 		Iterator<Control> itp=controlList.iterator();
 		Control iControl;
 		if(itp.hasNext())
@@ -85,15 +114,15 @@ public class ControlCollection
 				iRepeat=false;
 				while(itc.hasNext())
 				{
-					if(itc.next().equals(iControl))
+					if(pm.getObjectById(Control.class, itc.next()).equals(iControl))
 					{
-						hasRepeat=false;
+						hasRepeat=true;
 						iRepeat=true;
 						break;
 					}
 				}
 				if(!iRepeat)
-					this.controlList.add(iControl);
+					this.controlList.add(iControl.getControlID());
 			}
 		}
 		else
@@ -101,32 +130,6 @@ public class ControlCollection
 			throw new DeviceAndControlException(DeviceAndControlException.ControlNotExist);
 		}
 		return hasRepeat;
-	}
-	public boolean addOperation(Operation operation) throws OperationException, DeviceAndControlException
-	{
-		if(operation==null)
-			throw new OperationException(OperationException.OperationNotExist);
-		else
-		{
-			Control control=operation.getControl();
-			return addControl(control);
-		}
-	}
-	public boolean addOperation(List<Operation> operation) throws OperationException, DeviceAndControlException
-	{
-		List<Control> controlList=new ArrayList<Control>();
-		Iterator<Operation> it=operation.iterator();
-		if(it.hasNext())
-		{
-			while(it.hasNext())
-			{
-				controlList.add(it.next().getControl());
-				return addControl(controlList);
-			}
-		}
-		else
-			throw new OperationException(OperationException.OperationNotExist);
-		return false;
 	}
 	/**
 	 * @return the controlCollectionID
@@ -136,23 +139,28 @@ public class ControlCollection
 		return controlCollectionID;
 	}
 	/**
-	 * 获取所有的操作，然后清空操作列表
-	 * @return the controlList
+	 * @return the userNickname
 	 */
-	public List<Control> getControlList()
+	public String getUserNickname()
 	{
-		return controlList;
+		return userNickname;
+	}
+	public List<Control> getControl()
+	{
+		PersistenceManager pm=getPersistenceManager();
+		List<Control> re=new ArrayList<Control>();
+		Iterator<Key> it=controlList.iterator();
+		while(it.hasNext())
+		{
+			re.add(pm.getObjectById(Control.class, it.next()));
+		}
+		return re;
 	}
 	/**
-	 * 获取所有操作，并加入自动操作，返回后清空操作列表
-	 * @return
-	 * @throws OperationException 
-	 * @throws DeviceAndControlException 
-	 * @throws UserException 
+	 * @return the controlList
 	 */
-	public List<Control> getControlListWithOperation() throws OperationException, DeviceAndControlException, UserException
+	public List<Key> getControlList()
 	{
-		this.addOperation(Operation.findAllToDo());
 		return controlList;
 	}
 	/**
@@ -163,9 +171,16 @@ public class ControlCollection
 		this.controlCollectionID = controlCollectionID;
 	}
 	/**
+	 * @param userNickname the userNickname to set
+	 */
+	public void setUserNickname(String userNickname)
+	{
+		this.userNickname = userNickname;
+	}
+	/**
 	 * @param controlList the controlList to set
 	 */
-	public void setControlList(List<Control> controlList)
+	public void setControlList(List<Key> controlList)
 	{
 		this.controlList = controlList;
 	}
