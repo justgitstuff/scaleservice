@@ -11,19 +11,19 @@
 			private function getInfo():void
 			{
 				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.GET_INFO,true);
-				de.contentString=data.@content;
+				de.contentString=data.content;
 				dispatchEvent(de);
 			}
 			private function enterScene():void
 			{
 				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.ENTER_SCENE,true);
-				de.contentString=data.@title;
+				de.contentString=data.title;
 				dispatchEvent(de);
 			}
 		]]>
 	</mx:Script>
-	<mx:Label x="10" y="10" text="{data.@title}" fontFamily="Times New Roman" fontSize="16" fontWeight="bold"/>
-	<mx:Label text="{data.@startTime}" bottom="47" right="10" top="13"/>
+	<mx:Label x="10" y="10" text="{data.title}" fontFamily="Times New Roman" fontSize="16" fontWeight="bold"/>
+	<mx:Label text="{data.time}" bottom="47" right="10" top="13"/>
 	<mx:Button label="进入场景" icon="@Embed(source='../../img/favourites_us.png')" id="btn_enterScene" click="enterScene();" right="10" bottom="10"/>
 	<mx:Button label="显示信息" icon="@Embed(source='../../img/doc_us.png')" id="btn_showInfo" right="130" click="getInfo();" bottom="10"/>
 </mx:Canvas>

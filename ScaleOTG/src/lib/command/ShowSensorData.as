@@ -1,18 +1,17 @@
 package lib.command
 {
 	import lib.communicator.download.AllSensorData;
-	import lib.communicator.download.FilledDataType;
 	import lib.events.HSListEvent;
 	import lib.interfaces.ICommand;
 	
 	import visualComponents.detailContent.SensorData;
 	public final class ShowSensorData extends CmdBase implements ICommand
 	{
-		public var sDTID:uint;
+		private var _typeName:String;
 		private var allSensorData:AllSensorData;
-		public function ShowSensorData(sensorDataTypeID:uint)
+		public function ShowSensorData(typeName:String)
 		{
-			this.sDTID=sensorDataTypeID;
+			this._typeName=typeName;
 			super();
 		}
 
@@ -21,7 +20,7 @@ package lib.command
 			CmdBase.mainApp.currentState="sDetail";
 			CmdBase.mainApp.btn_showState(0);
 			allSensorData=AllSensorData.getInstance();
-			allSensorData.sensorDataTypeID=sDTID;
+			allSensorData.typeName=_typeName;
 			allSensorData.addEventListener(HSListEvent.LIST_SUCCESS,onDataLoaded);
 			allSensorData.sendHS();
 			
@@ -29,10 +28,10 @@ package lib.command
 		private function onDataLoaded(e:HSListEvent):void
 		{
 			var sensorData:SensorData=CmdBase.mainApp.detailPanel.getChildAt(0) as SensorData;
-			sensorData.sensorDataTypeID=sDTID;
+			sensorData.typeName=_typeName;
 			sensorData.btn_operation.enabled=true;
 			sensorData.btn_dataType.enabled=true;
-			sensorData.btn_sensor.enabled=true;
+			sensorData.btn_delete.enabled=true;
 			sensorData.sensorDataGrid.dataProvider=allSensorData.recordList;
 			sensorData.sensorDataChart.dataProvider=allSensorData.recordList;
 			sensorData.sensorDataChartH.dataProvider=allSensorData.recordList;

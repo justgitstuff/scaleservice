@@ -6,16 +6,17 @@ package lib.communicator.operation
 
 	public class RegSensor extends CommBase
 	{
-		public var lAddr:String;
 		public function RegSensor()
 		{
-			super(serverRoot+"sensor/register.php",false);
+			super(serverRoot+"register_sensor",true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sensorTag(value:String):void
 		{
-			HS_list.request.lAddrID=lAddr;
-			super.sendHS(e);
+			HS_list.request.sensorTag=value;
 		}
-		
+		public function set typeName(value:String):void
+		{
+			HS_list.request.typeName=value;
+		}
 	}
 }

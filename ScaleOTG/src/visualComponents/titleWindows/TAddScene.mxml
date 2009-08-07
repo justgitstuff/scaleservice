@@ -5,6 +5,7 @@
 			import lib.events.HSListEvent;
 			import lib.communicator.operation.AddScene;
 			import lib.communicator.download.AllScene;
+			import mx.controls.Alert;
 			import mx.managers.PopUpManager;
 			
 			public function centerWindow():void
@@ -24,12 +25,18 @@
 	        
 			private function onAdd():void
 			{
-				var addScene:AddScene=new AddScene();
-				addScene.sceneName=ipt_sceneName.text;
-				addScene.keyWord=ipt_keyWord.text;
-				addScene.advMin=ipt_advMin.value;
-				addScene.addEventListener(HSListEvent.OPERATION_SUCCESS,onOperationSuccess);
-				addScene.sendHS();
+				if(ipt_sceneName.text=="")
+					Alert.show("场景名称不能为空","场景名称错误");
+				else if(ipt_keyWord.text=="")
+					Alert.show("场景关键字不能为空","关键字错误");
+				else
+				{
+					var addScene:AddScene=new AddScene();
+					addScene.sceneName=ipt_sceneName.text;
+					addScene.keyWord=ipt_keyWord.text;
+					addScene.addEventListener(HSListEvent.OPERATION_SUCCESS,onOperationSuccess);
+					addScene.sendHS();
+				}
 			}
 			private function onOperationSuccess(e:Event=null):void
 			{
@@ -41,17 +48,10 @@
 	</mx:Script>
 	<mx:Label x="34" y="10" text="场景名称"/>
 	<mx:TextInput x="95" y="8" id="ipt_sceneName"/>
-	<mx:Label x="263" y="10" text="场景的名称" color="#8F8F8F"/>
-	<mx:Label x="46" y="39" text="关键字"/>
-	<mx:TextInput x="95" y="37" id="ipt_keyWord"/>
-	<mx:Label x="263" y="39" text="会自动触发场景的关键字" color="#8F8F8F"/>
-	<mx:Label x="95" y="70" text="当您的日程安排中有于此关键字完全匹配的事件时，该场景会自动触发" color="#8F8F8F"/>
-	<mx:Label x="10" y="101" text="提前进入时间"/>
-	<mx:NumericStepper x="95" y="99" width="123" minimum="0" maximum="180" id="ipt_advMin"/>
-	<mx:Label x="263" y="101" text="提前于事件进入场景的时间" color="#8F8F8F"/>
-	<mx:Label x="226" y="101" text="分钟"/>
-	<mx:Image y="130" source="img/favourites.png" x="374"/>
-	<mx:Button x="10" y="181" label="添加" icon="@Embed(source='../../img/yes.png')" click="onAdd();"/>
-	<mx:Button x="104" y="181" label="取消" icon="@Embed(source='../../img/no.png')" click="closeWindow();"/>
+	<mx:Label x="46" y="43" text="关键字"/>
+	<mx:TextInput x="95" y="41" id="ipt_keyWord"/>
+	<mx:Image y="20" source="img/favourites.png" x="263"/>
+	<mx:Button x="75" y="79" label="添加" icon="@Embed(source='../../img/yes.png')" click="onAdd();"/>
+	<mx:Button x="169" y="79" label="取消" icon="@Embed(source='../../img/no.png')" click="closeWindow();"/>
 	
 </mx:TitleWindow>

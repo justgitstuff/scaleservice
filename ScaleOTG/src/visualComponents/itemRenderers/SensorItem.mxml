@@ -8,23 +8,17 @@
 			{
 					
 			}
-			private function showSensorDetail():void
-			{
-				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.SHOW_DETAIL,true);
-				de.contentID=Number(data.@sensorID);
-				dispatchEvent(de);
-			}
 			private function regSensor():void
 			{
-				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.REG_SENSOR,true);
-				de.contentString=data.@lAddrID;
-				dispatchEvent(de);
+				var oe:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.SHOW_DETAIL,true);
+				oe.sensorTag=data.sensorTag;
+				dispatchEvent(oe);
 			}
 			private function unregSensor():void
 			{
-				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.UNREG_SENSOR,true);
-				de.contentString=data.@lAddrID;
-				dispatchEvent(de);
+				var oe:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.UNREG_SENSOR,true);
+				oe.sensorTag=data.sensorTag;
+				dispatchEvent(oe);
 			}
 			private function switchJoin():void
 			{
@@ -44,9 +38,9 @@
 		[Event(name="showDetail", type="lib.events.ItemRendererEvent")]
 	</mx:Metadata>
 	<mx:Move id="eSbtnMove"/>
-	<mx:Label x="88" y="46" text="{data.@lAddrID}" fontSize="18" id="label1" fontFamily="Times New Roman" fontWeight="normal"/>
-	<mx:Label x="88" y="12" text="传感器序列号：" fontSize="18" id="label0" fontFamily="Times New Roman" fontWeight="bold"/>
-	<mx:Button id="btn_join" label="配置..." enabled="{data.@sensorID!=''}" click="showSensorDetail();" icon="@Embed(source='../../img/customize_us.png')" right="10" bottom="36"/>
-	<mx:CheckBox x="386" y="45" label="已入网" selected="{data.@sensorID!=''}" fontSize="12" change="switchJoin();"/>
-	<mx:Image x="10" y="5" source="img/new.png" visible="{data.@sensorID==''}"/>
+	<mx:Label x="88" y="46" text="{data.sensorTag}" fontSize="18" id="label1" fontFamily="Times New Roman" fontWeight="normal"/>
+	<mx:Label x="88" y="12" text="传感器标识：" fontSize="18" id="label0" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Button id="btn_join" label="加入网络..." enabled="{data.typeName=='(Not In Network)'}" click="regSensor();" icon="@Embed(source='../../img/customize_us.png')" right="10" bottom="36" width="124"/>
+	<mx:Image x="10" y="5" source="img/new.png" visible="{data.typeName=='(Not In Network)'}"/>
+	<mx:Button label="断开网络" width="124" click="unregSensor();" enabled="{data.typeName!='(Not In Network)'}" right="10" bottom="8"/>
 </mx:Canvas>

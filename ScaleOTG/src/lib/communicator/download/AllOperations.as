@@ -8,7 +8,7 @@ package lib.communicator.download
 		
 		public function AllOperations()
 		{
-			super(serverRoot+"operation/getOperations.php");
+			super(serverRoot+"view_operation");
 		}
 		public static function getInstance():AllOperations
 		{

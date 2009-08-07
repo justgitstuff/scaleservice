@@ -11,7 +11,11 @@ package lib.events
 		public static const ENTER_SCENE:String="enterScene";
 		public static const GET_INFO:String="getInfo";
 		public var contentID:uint;
+		public var sensorTag:String;
 		public var contentString:String;
+		public var deviceTag:String;
+		public var command:String;
+		public var parameter:String;
 		public function ItemRendererEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);

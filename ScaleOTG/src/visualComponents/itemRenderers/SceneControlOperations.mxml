@@ -6,9 +6,11 @@
 			import lib.events.ItemRendererEvent;
 			private function showDataTypeDetail(e:Event=null):void
 			{
-				var de:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.DELETE_ROW,true);
-				de.contentID=Number(data.@scID);
-				dispatchEvent(de);
+				var oe:ItemRendererEvent=new ItemRendererEvent(ItemRendererEvent.DELETE_ROW,true);
+				oe.deviceTag=data.deviceTag[0];
+				oe.command=data.command[0];
+				oe.parameter=data.parameter[0];
+				dispatchEvent(oe);
 			}
 		]]>
 	</mx:Script>

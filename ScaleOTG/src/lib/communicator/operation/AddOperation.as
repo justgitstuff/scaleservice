@@ -1,26 +1,32 @@
 package lib.communicator.operation
 {
 	import lib.communicator.CommBase;
-	import flash.events.Event;
 	public class AddOperation extends CommBase
 	{
-		public var lAddrID:String;
-		public var commandID:String;
-		public var sensorDataTypeID:String;
-		public var inc:int;
 		public function AddOperation()
 		{
 			//super(serverRoot+"EditSensor.xml",true);
-			super(serverRoot+"operation/addOperation.php",true);
+			super(serverRoot+"add_operation",true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set deviceTag(value:String):void
 		{
-			HS_list.request.lAddrID=lAddrID;
-			HS_list.request.commandID=commandID;
-			HS_list.request.sensorDataTypeID=sensorDataTypeID;
-			HS_list.request.inc=inc;
-			super.sendHS();
+			this.HS_list.request.deviceTag=value;
 		}
-		
+		public function set command(value:String):void
+		{
+			this.HS_list.request.command=value;
+		}
+		public function set parameter(value:String):void
+		{
+			this.HS_list.request.parameter=value;
+		}
+		public function set direction(value:String):void
+		{
+			this.HS_list.request.direction=value;
+		}
+		public function set typeName(value:String):void
+		{
+			this.HS_list.request.typeName=value;
+		}
 	}
 }

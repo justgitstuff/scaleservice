@@ -2,16 +2,15 @@ package lib.communicator
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
+	import flash.utils.ByteArray;
 	
+	import lib.HTTPService;
 	import lib.events.HSListEvent;
 	import lib.factory.HSFactory;
 	
 	import mx.controls.Alert;
 	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
-	import mx.rpc.http.HTTPService;
+	//import mx.rpc.http.HTTPService;
 	[Event(name="listSuccess", type="lib.events.HSListEvent")]
 	[Event(name="operationSuccess", type="lib.events.HSListEvent")]
 	[Event(name="operationFail", type="lib.events.HSListEvent")]
@@ -22,7 +21,8 @@ package lib.communicator
 		//public static var serverRoot:String="http://192.168.1.100/ScaleService/";
 		//public static var serverRoot:String="http://192.168.1.101/ScaleService/";
 		//public static var serverRoot:String="http://127.0.0.1/ScaleProtocol/";
-		public static var serverRoot:String="http://192.168.1.104/";
+		public static var serverRoot:String="http://192.168.1.103:8081/";
+		//public static var serverRoot:String="http://localhost:8080/"
 		public function CommBase(url:String,needParse:Boolean=false,reTry:Boolean=false)
 		{
 			this.needParse=needParse;
@@ -36,16 +36,18 @@ package lib.communicator
 			trace("向业务层"+this.HS_list.url+"发送请求。");
 			this.HS_list.send();
 		}
-		protected function parseHSReturn(e:ResultEvent):void
+		protected function parseHSReturn(e:Event):void
 		{
 			
 			trace("从业务层"+this.HS_list.url+"成功获得信息。");
-			trace(e.result);
+			//trace(e.result);
 			dispatchEvent(new HSListEvent(HSListEvent.LIST_SUCCESS));
 			if(needParse)
 			{
 				var returnCode:int
-				var parseXML:XML=new XML(e.target.lastResult);
+				var bytes:ByteArray = ByteArray(e.target.data);
+			    var xmlStr:String = bytes.readMultiByte(bytes.length,"gb2312");
+			    var parseXML:XML= XML(xmlStr);
 				returnCode=Number(parseXML.actionReturn);
 				switch(returnCode)
 				{
@@ -105,7 +107,7 @@ package lib.communicator
 				}
 			}
 		}
-		protected function showError(e:FaultEvent):void
+		protected function showError(e:Event=null):void
 		{
 			trace("业务层"+this.HS_list.url+"连接失败，放弃连接。");
 			Alert.show("服务连接失败：网络连接出现故障。"+this.HS_list.url,"业务层连接故障");

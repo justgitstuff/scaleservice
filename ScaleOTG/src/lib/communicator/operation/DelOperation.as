@@ -1,24 +1,28 @@
 package lib.communicator.operation
 {
-	import flash.events.Event;
-	
 	import lib.communicator.CommBase;
 	public class DelOperation extends CommBase
 	{
-		public var lAddrID:String;
-		public var commandID:String;
-		public var sensorDataTypeID:uint
 		public function DelOperation()
 		{
 			//super(serverRoot+"EditSensor.xml",true);
-			super(serverRoot+"operation/deleteOperation.php",true);
+			super(serverRoot+"delete_operation",true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set deviceTag(value:String):void
 		{
-			HS_list.request.lAddrID=lAddrID;
-			HS_list.request.commandID=commandID;
-			HS_list.request.sensorDataTypeID=sensorDataTypeID;
-			super.sendHS();
+			HS_list.request.deviceTag=value;
+		} 
+		public function set command(value:String):void
+		{
+			HS_list.request.command=value;
+		} 
+		public function set parameter(value:String):void
+		{
+			HS_list.request.parameter=value;
 		}
+		public function set typeName(value:String):void
+		{
+			HS_list.request.typeName=value;
+		} 
 	}
 }

@@ -3,17 +3,18 @@
 	 creationComplete="centerWindow();init();" width="370">
 	<mx:Script>
 		<![CDATA[
-		import lib.communicator.download.Sensor_SensorDataType;
 		import lib.communicator.download.Single_Sensor;
 		import lib.communicator.download.FilledDataType;
 		import lib.communicator.operation.EditSensorDataType;
 		import mx.managers.PopUpManager;
+		import mx.controls.Alert;
 		import lib.events.HSListEvent;
 		import lib.communicator.operation.EditSensor;
-		private var sid:uint;
-		public function set sensorDataTypeID(value:uint):void
+		private var _typeName:String;
+		public function set typeName(value:String):void
 		{
-			this.sid=value;
+			this._typeName=value;
+			this.ipt_dataTypeName.text=value;
 		}
 		public function centerWindow():void
         {
@@ -31,22 +32,23 @@
         }
         private function onEditDataType():void
         {
-        	var es:EditSensorDataType=new EditSensorDataType();
-        	es.sensorDataTypeID=sid;
-        	es.typeName=ipt_dataTypeName.text;
-        	es.maxCustom=ipt_maxCustom.value;
-        	es.minCustom=ipt_minCustom.value;
-        	es.addEventListener(HSListEvent.OPERATION_SUCCESS,onEditSuccess);
-        	es.sendHS();
+        	if(ipt_maxCustom.value<ipt_minCustom.value)
+				Alert.show("数据上限不能小于数据下限","数据阈值错误");
+			else
+			{
+	        	var es:EditSensorDataType=new EditSensorDataType();
+	        	es.typeName=_typeName;
+	        	es.unit=ipt_unit.text;
+	        	es.maxCustom=ipt_maxCustom.value;
+	        	es.minCustom=ipt_minCustom.value;
+	        	es.addEventListener(HSListEvent.OPERATION_SUCCESS,onEditSuccess);
+	        	es.sendHS();
+			}
         }
         private function onEditSuccess(e:Event=null):void
         {
         	var filledDataType:FilledDataType=FilledDataType.getInstance();
-        	var ss:Sensor_SensorDataType=Sensor_SensorDataType.getInstance();
-        	if(ss.sensorID)
-        		ss.sendHS();
         	filledDataType.sendHS();
-        	
         	closeWindow();
         }
 		]]>
@@ -55,7 +57,7 @@
 	<mx:Form x="10" y="10" width="330">
 		<mx:FormHeading label="数据类型"/>
 		<mx:FormItem label="数据类型名" width="100%">
-			<mx:TextInput id="ipt_dataTypeName" width="100%"/>
+			<mx:TextInput id="ipt_dataTypeName" width="100%" enabled="false"/>
 		</mx:FormItem>
 		<mx:FormItem label="单位">
 			<mx:TextInput id="ipt_unit" editable="true" enabled="false"/>

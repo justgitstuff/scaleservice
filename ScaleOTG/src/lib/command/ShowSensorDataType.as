@@ -46,6 +46,7 @@ package lib.command
 		{
 			if(filledDataType.recordList.length)
 			{
+				CmdBase.mainApp.emptyImage.visible=false;
 				var sd:SensorData=new SensorData();
 				var ilst:List;
 				
@@ -74,7 +75,12 @@ package lib.command
 				filledDataType.recordList.refresh();
 			}
 			else
+			{
+				CmdBase.mainApp.currentState="sIndex";
+				CmdBase.mainApp.VSI.removeAllChildren();
+				CmdBase.mainApp.emptyImage.visible=true;
 				Alert.show("当前还未有任何数据类型，请确认您已将传感器注册入网。是否现在注册传感器？","未找到正在工作的传感器",Alert.YES|Alert.NO,CmdBase.mainApp,emptyHandler);
+			}
 		}
 		private function emptyHandler(e:CloseEvent):void
 		{
@@ -89,8 +95,8 @@ package lib.command
 			var cString:String=CmdBase.mainApp.ipt_search.text;
 			if(
 				cString==""
-			 || String(item.@unit).indexOf(cString)!=-1
-			 || String(item.@typeName).indexOf(cString)!=-1
+			 || String(item.unit).indexOf(cString)!=-1
+			 || String(item.typeName).indexOf(cString)!=-1
 			 )
 				return true;
 			else

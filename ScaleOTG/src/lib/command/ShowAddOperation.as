@@ -8,18 +8,18 @@ package lib.command
 	public class ShowAddOperation extends CmdBase implements ICommand
 	{
 		private var pwAddOperation:TAddOperation;
-		private var dataTypeOrder:uint;
-		public function ShowAddOperation(dataTypeOrder:uint=0)
+		private var _defaultTypeName:String;
+		
+		public function ShowAddOperation(defaultTypeName:String=null)
 		{
-			this.dataTypeOrder=dataTypeOrder;
+			this._defaultTypeName=defaultTypeName;
 			super();
 		}
 		
 		public function execute():void
 		{
 			pwAddOperation=PopUpManager.createPopUp(CmdBase.mainApp,TAddOperation,false) as TAddOperation;
-			if(dataTypeOrder)
-				pwAddOperation.dOrder=dataTypeOrder;
+			//添加默认DataType
 		}
 		
 	}

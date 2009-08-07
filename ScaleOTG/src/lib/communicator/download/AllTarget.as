@@ -7,7 +7,7 @@ package lib.communicator.download
 		private static var unique:AllTarget;
 		public function AllTarget()
 		{
-			super(serverRoot+"operation/getControlTargets.php");
+			super(serverRoot+"view_device");
 		}
 		public static function getInstance():AllTarget
 		{

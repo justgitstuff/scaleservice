@@ -7,10 +7,9 @@ package lib.communicator.download
 	public class AllSceneControl extends DownloadBase
 	{
 		private static var unique:AllSceneControl;
-		public var sceneID:uint;
 		public function AllSceneControl()
 		{
-			super(serverRoot+"scene_control/getScene_control.php");
+			super(serverRoot+"view_sceneControl");
 		}
 		public static function getInstance():AllSceneControl
 		{
@@ -18,10 +17,9 @@ package lib.communicator.download
 				unique=new AllSceneControl();
 			return unique;
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sceneName(value:String):void
 		{
-			HS_list.request.sceneID=sceneID;
-			super.sendHS();
+			HS_list.request.sceneName=value;
 		}
 	}
 }

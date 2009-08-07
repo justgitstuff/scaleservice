@@ -6,15 +6,14 @@ package lib.communicator.operation
 
 	public class DeleteScene extends CommBase
 	{
-		public var sceneID:uint;
+		private var _sceneName:String;
 		public function DeleteScene()
 		{
-			super(serverRoot+"scene/deleteScene.php",true);
+			super(serverRoot+"delete_scene",true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sceneName(value:String):void
 		{
-			HS_list.request.sceneID=sceneID;
-			super.sendHS();
+			HS_list.request.sceneName=value;
 		}
 	}
 }

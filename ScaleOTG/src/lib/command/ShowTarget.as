@@ -45,6 +45,7 @@ package lib.command
 		{
 			if(allTarget.recordList.length)
 			{
+				CmdBase.mainApp.emptyImage.visible=false;
 				var sd:ManualControl=new ManualControl();
 				var ilst:List;
 				CmdBase.mainApp.indexPanel.title="所有设备";
@@ -72,14 +73,21 @@ package lib.command
 				allTarget.recordList.refresh();
 			}
 			else
+			{
+				CmdBase.mainApp.currentState="sIndex";
+				CmdBase.mainApp.VSI.removeAllChildren();
+				CmdBase.mainApp.emptyImage.visible=true;
 				Alert.show("未找到可以控制的设备。请确认您已购买Scale兼容的被控设备，且已打开其电源。","未找到可控设备");
+			}
 		}
 		public function dataTypeFileter(item:Object):Boolean
 		{
 			var cString:String=CmdBase.mainApp.ipt_search.text;
 			if(
 				cString==""
-			 || String(item.@targetDescription).indexOf(cString)!=-1
+			 || String(item.deviceTag).indexOf(cString)!=-1
+			 || String(item.intro).indexOf(cString)!=-1
+			 || String(item.currentState).indexOf(cString)!=-1
 			 )
 				return true;
 			else

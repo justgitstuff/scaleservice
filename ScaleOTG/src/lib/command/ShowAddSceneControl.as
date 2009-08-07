@@ -8,17 +8,17 @@ package lib.command
 	public class ShowAddSceneControl extends CmdBase implements ICommand
 	{
 		private var pwAddSceneControl:TAddSensorControl;
-		private var sceneID:uint;
-		public function ShowAddSceneControl(sceneID:uint)
+		private var _sceneName:String;
+		public function ShowAddSceneControl(sceneName:String)
 		{
-			this.sceneID=sceneID;
+			this._sceneName=sceneName;
 			super();
 		}
 		
 		public function execute():void
 		{
 			pwAddSceneControl=PopUpManager.createPopUp(CmdBase.mainApp,TAddSensorControl,false) as TAddSensorControl;
-			pwAddSceneControl.sceneID=this.sceneID;
+			pwAddSceneControl.sceneName=_sceneName;
 		}
 		
 	}
