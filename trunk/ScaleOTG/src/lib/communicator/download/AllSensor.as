@@ -8,7 +8,7 @@ package lib.communicator.download
 		public function AllSensor()
 		{
 			//super(serverRoot+"Sensor.xml");
-			super(serverRoot+"sensor/getSensors.php");
+			super(serverRoot+"view_sensor");
 		}
 		public static function getInstance():AllSensor
 		{

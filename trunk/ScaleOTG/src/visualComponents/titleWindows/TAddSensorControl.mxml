@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();">
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();" height="370" width="300">
 	<mx:Script>
 		<![CDATA[
 			import lib.communicator.download.AllSceneControl;
@@ -10,9 +10,14 @@
 			import lib.events.HSListEvent;
 			import lib.communicator.download.AllTarget;
 			import lib.communicator.download.AllCommand;
+			import mx.controls.Alert;
 			private var allCommand:AllCommand;
 			private var allTarget:AllTarget;
-			public var sceneID:uint;
+			private var _sceneName:String;
+			public function set sceneName(value:String):void
+			{
+				this._sceneName=value;
+			}
 			public function centerWindow():void
 	        {
 	        	PopUpManager.centerPopUp(this);
@@ -25,13 +30,16 @@
 	        
 	        private function init():void
 	        {
-				allCommand=new AllCommand();
-				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
-				allCommand.sendHS();
 				allTarget=new AllTarget();
 				allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
 				allTarget.sendHS();
-				
+	        }
+	        private function changeDevice():void
+	        {
+	        	allCommand=new AllCommand();
+	        	allCommand.deviceTag=ipt_target.selectedItem.deviceTag;
+	        	allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
+	        	allCommand.sendHS();
 	        }
 			private function onCommandLoaded(e:Event=null):void
 			{
@@ -40,15 +48,32 @@
 			private function onTargetLoaded(e:Event=null):void
 			{
 				ipt_target.dataProvider=allTarget.recordList;
+				if(allTarget.recordXML.row[0]!=null)
+				{
+					changeDevice();
+				}
+				else
+				{
+					Alert.show("您必须先购买与Scale系统相兼容的设备，并将其注册到系统中才能让Scale帮助您自动控制它","缺少被控设备");
+					ipt_target.enabled=false;
+					ipt_cmd.enabled=false;
+					btn_save.enabled=false;
+				}	
 			}
 			private function onAdd(e:Event=null):void
 			{
-				var oc:AddSceneControl=new AddSceneControl();
-				oc.lAddrID=ipt_target.selectedItem.@lAddrID;
-				oc.commandID=ipt_cmd.selectedItem.@commandID;
-				oc.sceneID=this.sceneID;
-				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
-				oc.sendHS();
+				if(validate())
+				{
+					var oc:AddSceneControl=new AddSceneControl();
+					oc.sceneName=_sceneName;
+					oc.deviceTag=ipt_target.selectedItem.deviceTag;//TODO 添加场景控制
+					oc.command=ipt_cmd.selectedItem.command;
+					oc.parameter=ipt_cmd.selectedItem.parameter;
+					oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
+					oc.sendHS();
+				}
+				else
+					Alert.show("请您先选择设备和命令","信息不完整");
 			}
 			private function onAddSuccess(e:Event=null):void
 			{
@@ -56,14 +81,26 @@
 				ao.sendHS();
 				closeWindow();
 			}
+			private function validate():Boolean
+			{
+				if(ipt_target.selectedItem==null || ipt_cmd.selectedItem==null)
+					return false;
+				else
+					return true;
+			}
 		]]>
 	</mx:Script>
 	<mx:Label x="0" y="0" text="操作设置" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
-	<mx:Label x="10" y="33" text="操作名称:" fontWeight="normal"/>
-	<mx:ComboBox y="30" left="74" width="160" id="ipt_cmd" labelField="@commandDescription"></mx:ComboBox>
-	<mx:ComboBox y="63" left="74" id="ipt_target" labelField="@targetDescription" width="160"></mx:ComboBox>
-	<mx:Button label="添加" icon="@Embed(source='../../img/yes.png')" click="onAdd();" x="92" y="95"/>
-	<mx:Label x="10" y="66" text="操作对象:"/>
-	<mx:Button x="186" y="95" label="关闭" icon="@Embed(source='../../img/no.png')" click="closeWindow();"/>
+	<mx:Label x="10" y="62" text="命令/参数:" fontWeight="normal"/>
+	<mx:ComboBox y="30" left="74" id="ipt_target" labelField="intro" width="196" change="changeDevice();"></mx:ComboBox>
+	<mx:Button label="添加" icon="@Embed(source='../../img/yes.png')" click="onAdd();" x="90" y="280" id="btn_save"/>
+	<mx:Label x="10" y="33" text="目标设备:"/>
+	<mx:Button x="184" y="280" label="关闭" icon="@Embed(source='../../img/no.png')" click="closeWindow();"/>
+	<mx:DataGrid x="10" y="91" width="260" id="ipt_cmd" height="181">
+		<mx:columns>
+			<mx:DataGridColumn headerText="命令" dataField="command"/>
+			<mx:DataGridColumn headerText="参数" dataField="parameter"/>
+		</mx:columns>
+	</mx:DataGrid>
 	
 </mx:TitleWindow>

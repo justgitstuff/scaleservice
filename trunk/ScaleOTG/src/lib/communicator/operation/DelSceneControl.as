@@ -1,7 +1,5 @@
 package lib.communicator.operation
 {
-	import flash.events.Event;
-	
 	import lib.communicator.CommBase;
 
 	public class DelSceneControl extends CommBase
@@ -9,12 +7,23 @@ package lib.communicator.operation
 		public var scID:uint;
 		public function DelSceneControl()
 		{
-			super(serverRoot+"scene_control/deleteScene_control.php",true);
+			super(serverRoot+"delete_sceneControl",true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sceneName(value:String):void
 		{
-			HS_list.request.scID=scID;
-			super.sendHS();
+			HS_list.request.sceneName=value;
+		}
+		public function set deviceTag(value:String):void
+		{
+			HS_list.request.deviceTag=value;
+		}
+		public function set command(value:String):void
+		{
+			HS_list.request.command=value;
+		}
+		public function set parameter(value:String):void
+		{
+			HS_list.request.parameter=value;
 		}
 	}
 }

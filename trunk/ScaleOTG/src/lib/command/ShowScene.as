@@ -46,6 +46,7 @@ package lib.command
 		{
 			if(allScene.recordList.length)
 			{
+				CmdBase.mainApp.emptyImage.visible=false;
 				var sd:SceneDetail=new SceneDetail();
 				var ilst:List;
 				
@@ -74,7 +75,12 @@ package lib.command
 				allScene.recordList.refresh();
 			}
 			else
+			{
+				CmdBase.mainApp.currentState="sIndex";
+				CmdBase.mainApp.VSI.removeAllChildren();
+				CmdBase.mainApp.emptyImage.visible=true;
 				Alert.show("当前尚未建立任何场景。场景是一系列操作的组合，可以快速的变换家庭的环境设定。是否现在建立场景？","建立场景",Alert.YES|Alert.NO,CmdBase.mainApp,emptyHandler);
+			}
 		}
 		private function emptyHandler(e:CloseEvent):void
 		{
@@ -88,8 +94,8 @@ package lib.command
 		{
 			var cString:String=CmdBase.mainApp.ipt_search.text;
 			if((cString==""
-			 || String(item.@sceneName).indexOf(cString)!=-1)
-			 || String(item.@keyWord).indexOf(cString)!=-1)
+			 || String(item.sceneName).indexOf(cString)!=-1)
+			 || String(item.keyWord).indexOf(cString)!=-1)
 				return true;
 			else
 				return false; 

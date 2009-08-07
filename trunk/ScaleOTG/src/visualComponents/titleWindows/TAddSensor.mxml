@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="传感器注册向导" showCloseButton="true" close="closeWindow();" 
+	 creationComplete="centerWindow();init();" width="600" height="380" xmlns:detailContent="visualComponents.detailContent.*" currentState="step1">
+	<mx:Script>
+		<![CDATA[
+			import lib.communicator.download.AllLaddr;
+			import lib.communicator.download.AllSensor;
+			import lib.communicator.operation.RegSensorAndDataType;
+			import lib.communicator.operation.RegSensor;
+			import lib.communicator.download.AllDataType;
+			import lib.communicator.download.Single_Sensor;
+			import lib.communicator.download.FilledDataType;
+			import lib.communicator.operation.EditSensorDataType;
+			import mx.managers.PopUpManager;
+			import lib.events.HSListEvent;
+			import lib.communicator.operation.EditSensor;
+			import mx.controls.Alert;
+			private var _sensorTag:String;
+			private var gotoNext:Function;
+			private var gotoPrev:Function;
+			private var singleSensor:Single_Sensor;
+			public function centerWindow():void
+	        {
+	        	PopUpManager.centerPopUp(this);
+	        }
+	        
+	        public function closeWindow():void
+	        {
+	        	PopUpManager.removePopUp(this);
+	        }
+	        private function init():void
+	        {
+	        	
+	        }
+			public function set sensorTag(value:String):void
+			{
+				this._sensorTag=value;
+			}
+			private function onChangeDataTypeUseStrategy():void
+			{
+				cmb_existDataType.enabled=rdo_useExist.selected;
+				form_newDataType.enabled=!rdo_useExist.selected;
+			}
+			private function gotoStep1():void
+			{
+				this.currentState="step1";
+			}
+			private function onEnterStep1():void
+			{
+				gotoPrev=null;
+				gotoNext=gotoStep2;
+			}
+			private function gotoStep2():void
+			{
+				this.currentState="step2";
+			}
+			private function onEnterStep2():void
+			{
+				gotoPrev=gotoStep1;
+				gotoNext=gotoStep3;
+				ipt_sensorTag.text=_sensorTag;
+			}
+			private function gotoStep3():void
+			{
+				this.currentState="step3";
+			}
+			private function onEnterStep3():void
+			{
+				gotoPrev=gotoStep2;
+				gotoNext=gotoStep4;
+				singleSensor=new Single_Sensor(_sensorTag);
+				singleSensor.addEventListener(HSListEvent.LIST_SUCCESS,onSensorInfoLoaded);
+				singleSensor.sendHS();
+			}
+			private function onSensorInfoLoaded(e:Event=null):void
+			{
+				ipt_sensorName.text=singleSensor.recordXML.row.sensorName[0];
+				ipt_location.text=singleSensor.recordXML.row.location[0]
+				ipt_manufacture.text=singleSensor.recordXML.row.manufacturer[0];
+				ipt_description.text=singleSensor.recordXML.row.description[0];
+				ipt_memo.text=singleSensor.recordXML.row.memo[0];
+			}
+			private function gotoStep4():void
+			{
+				this.btn_next.enabled=false;
+				var es:EditSensor=new EditSensor(false);
+	        	es.sensorTag=_sensorTag;
+	        	es.sensorName=ipt_sensorName.text;
+	        	es.location=ipt_location.text;
+	        	es.manufacturer=ipt_manufacture.text;
+	        	es.description=ipt_description.text;
+	        	es.memo=ipt_memo.text;
+	        	es.addEventListener(HSListEvent.LIST_SUCCESS,onEditSuccess);
+	        	es.sendHS();
+			}
+			private function onEditSuccess(e:Event=null):void
+			{
+				this.btn_next.enabled=true;
+				this.currentState="step4";
+			}
+			private function onEnterStep4():void
+			{
+				gotoPrev=gotoStep3;
+				gotoNext=onFinish;
+				var ad:AllDataType=new AllDataType();
+				ad.addEventListener(HSListEvent.LIST_SUCCESS,onDataTypeLoaded);
+				ad.sendHS();
+			}
+			private function onDataTypeLoaded(e:Event=null):void
+			{
+				cmb_existDataType.dataProvider=e.target.recordList;
+			}
+			private function onFinish():void
+			{
+				if(rdo_useExist.selected)
+				{
+					if(cmb_existDataType.selectedItem==null)
+					{
+						Alert.show("您当前没有数据类型，请您为您的传感器建立一个新的数据类型","尚无数据类型");
+						this.rdo_useNew.selected=true;
+					}
+					else
+					{
+						var registerSensor:RegSensor=new RegSensor();
+						registerSensor.sensorTag=_sensorTag;
+						registerSensor.typeName=cmb_existDataType.selectedItem.typeName;
+						registerSensor.addEventListener(HSListEvent.OPERATION_SUCCESS,regSuccess);
+						registerSensor.sendHS();
+					}
+				}
+				else
+				{
+					if(ipt_maxCustom.value<ipt_minCustom.value)
+						Alert.show("数据上限不能小于数据下限","数据阈值错误");
+					else if(ipt_dataTypeName.text=="" || ipt_dataTypeName.text=="(Not In Network)")
+						Alert.show("请输入合适的数据类型名称","数据类型非法");
+					else
+					{
+						var registerSensorAndDataType:RegSensorAndDataType=new RegSensorAndDataType();
+						registerSensorAndDataType.sensorTag=_sensorTag;
+						registerSensorAndDataType.typeName=ipt_dataTypeName.text;
+						registerSensorAndDataType.maxCustom=ipt_maxCustom.value;
+						registerSensorAndDataType.minCustom=ipt_minCustom.value;
+						registerSensorAndDataType.addEventListener(HSListEvent.OPERATION_SUCCESS,regSuccess);
+						registerSensorAndDataType.sendHS();
+					}
+				}
+			}
+			private function regSuccess(e:Event):void
+			{
+				var allSensor:AllLaddr=AllLaddr.getInstance();
+				allSensor.sendHS();
+				var allDataType:FilledDataType=FilledDataType.getInstance();
+				allDataType.sendHS();
+				closeWindow();
+			}
+		]]>
+	</mx:Script>
+	<mx:states>
+		<mx:State name="step1" enterState="onEnterStep1();">
+			<mx:AddChild position="lastChild">
+				<mx:Label x="10" y="10" text="您好，欢迎使用新传感器注册向导" fontWeight="bold"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label text="Scale系统将尽力使您的智能家庭的配置变得简单，快速。" horizontalCenter="0" verticalCenter="0"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label x="138" y="187" text="本向导将帮助您将新购置的传感器添加到您的家庭网络中"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label x="399" y="273" text="单击&quot;下一步&quot;，开始添加传感器"/>
+			</mx:AddChild>
+			<mx:SetProperty target="{btn_prev}" name="enabled" value="false"/>
+		</mx:State>
+		<mx:State name="step2" enterState="onEnterStep2();">
+			<mx:AddChild position="lastChild">
+				<mx:Label x="10" y="10" text="确认您将要添加的传感器" fontWeight="bold"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label text="传感器标识" horizontalCenter="-248" verticalCenter="0"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:TextInput width="386" enabled="false" horizontalCenter="-14" verticalCenter="0" id="ipt_sensorTag"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label  x="83" y="189" text="每个Scale系统兼容的无线传感器都会有一个全球唯一的标识(sensorTag)。" color="#B8B8B8"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label  x="83" y="218" text="每一个传感器只能与一个系统关联，故请您再次确认之" color="#B8B8B8"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label x="375" y="273" text="单击&quot;下一步&quot;，开始配置传感器信息"/>
+			</mx:AddChild>
+			<mx:SetEventHandler target="{btn_next}" name="click" handler="gotoNext();"/>
+			<mx:SetEventHandler target="{btn_prev}" name="click" handler="gotoPrev();"/>
+		</mx:State>
+		<mx:State name="step3" enterState="onEnterStep3();">
+			<mx:AddChild position="lastChild">
+				<mx:Label x="375" y="273" text="单击&quot;下一步&quot;，开始配置传感器信息"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Form x="10" y="39" width="482" height="226">
+					<mx:FormItem label="传感器名称">
+						<mx:TextInput id="ipt_sensorName" enabled="false"/>
+					</mx:FormItem>
+					<mx:FormItem label="位置">
+						<mx:TextInput id="ipt_location"/>
+					</mx:FormItem>
+					<mx:FormItem label="生产厂家">
+						<mx:TextInput id="ipt_manufacture" enabled="false"/>
+					</mx:FormItem>
+					<mx:FormItem label="描述">
+						<mx:TextInput id="ipt_description" enabled="false"/>
+					</mx:FormItem>
+					<mx:FormItem label="备注">
+						<mx:TextArea id="ipt_memo"/>
+					</mx:FormItem>
+				</mx:Form>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Label x="10" y="10" fontWeight="bold" text="配置传感器信息"/>
+			</mx:AddChild>
+		</mx:State>
+		<mx:State name="step4" enterState="onEnterStep4();">
+			<mx:AddChild position="lastChild">
+				<mx:Label x="10" y="10" fontWeight="bold" text="配置数据类型"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:RadioButtonGroup id="dataTypeStategy" change="onChangeDataTypeUseStrategy();"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:RadioButton x="10" y="39" label="使用已有的数据类型" id="rdo_useExist" groupName="dataTypeStategy" selected="false"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:RadioButton x="10" y="72" label="新建数据类型" groupName="dataTypeStategy" selected="true" id="rdo_useNew"/>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:ComboBox x="152" y="38" id="cmb_existDataType" labelField="typeName" enabled="false"></mx:ComboBox>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:Form x="152" y="72" width="340" height="222" id="form_newDataType" enabled="true" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+					<mx:FormHeading label="数据类型"/>
+					<mx:FormItem label="数据类型名" width="100%">
+						<mx:TextInput id="ipt_dataTypeName" width="100%" enabled="true"/>
+						<mx:Label text="(如：客厅温度，阳台光照)" color="#B8B8B8"/>
+					</mx:FormItem>
+					<mx:FormItem label="最高期望值" width="100%">
+						<mx:HBox>
+							<mx:NumericStepper id="ipt_maxCustom" stepSize="0.01" maximum="999999999" minimum="-999999999" width="150"/>
+							<mx:Label text="Centigrade" id="u1"/>
+						</mx:HBox>
+						<mx:Label text="高于此值时，系统会认为该数据类型过高" color="#B8B8B8"/>
+					</mx:FormItem>
+					<mx:FormItem label="最低期望值" width="100%">
+						<mx:HBox>
+							<mx:NumericStepper id="ipt_minCustom" stepSize="0.01" maximum="999999999" minimum="-999999999" width="150"/>
+							<mx:Label text="Centigrade" id="u2"/>
+						</mx:HBox>
+						<mx:Label text="低于此值时，系统会认为该数据类型过高" color="#B8B8B8"/>
+					</mx:FormItem>
+				</mx:Form>
+			</mx:AddChild>
+			<mx:SetProperty target="{btn_next}" name="label" value="完成"/>
+			<mx:SetProperty target="{btn_next}" name="width" value="65"/>
+		</mx:State>
+	</mx:states>
+	<mx:Button x="505" y="302" label="下一步" id="btn_next" click="gotoNext();"/>
+	<mx:Button x="432" y="302" label="上一步" id="btn_prev" click="gotoPrev();"/>
+	<mx:Image source="img/sensor.png" right="10" top="10"/>
+</mx:TitleWindow>

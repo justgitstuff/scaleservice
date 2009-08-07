@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" showCloseButton="true" close="closeWindow();" creationComplete="centerWindow();" width="400" height="160" title="修改设备信息">
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			import lib.communicator.download.AllTarget;
+			import lib.events.HSListEvent;
+			import lib.communicator.operation.EditDevice;
+			private var _deviceTag:String;
+			public function centerWindow():void
+	        {
+	        	PopUpManager.centerPopUp(this);
+	        }
+	        
+	        public function closeWindow():void
+	        {
+	        	PopUpManager.removePopUp(this);
+	        }
+	        public function set deviceTag(value:String):void
+	        {
+	        	this._deviceTag=value;
+	        	this.ipt_deviceTag.text=value;
+	        }
+			private function onEdit():void
+			{
+				var oc:EditDevice=new EditDevice();
+				oc.deviceTag=ipt_deviceTag.text;
+				oc.intro=ipt_intro.text;
+				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onEditSuccess);
+				oc.sendHS();
+			}
+			private function onEditSuccess(e:Event=null):void
+			{
+				var ad:AllTarget=AllTarget.getInstance();
+				ad.sendHS();
+				closeWindow();
+			}
+		]]>
+	</mx:Script>
+	<mx:TextInput x="71" y="10" width="299" enabled="false" id="ipt_deviceTag"/>
+	<mx:Label x="10" y="12" text="设备标签"/>
+	<mx:Label x="10" y="45" text="设备说明"/>
+	<mx:TextInput x="71" y="43" width="299" id="ipt_intro"/>
+	<mx:Button x="147" y="76" label="保存" icon="@Embed(source='../../img/save.png')" click="onEdit();"/>
+	
+</mx:TitleWindow>

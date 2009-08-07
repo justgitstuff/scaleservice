@@ -1,18 +1,18 @@
 package lib.communicator.download
 {
+	import flash.events.Event;
+	
 	import lib.communicator.DownloadBase;
 	
 	import mx.collections.Sort;
 	import mx.collections.SortField;
-	import mx.rpc.events.ResultEvent;
 
 	public class AllSensorData extends DownloadBase
 	{
 		private static var unique:AllSensorData;
-		private var dID:uint;
 		public function AllSensorData()
 		{	
-			super(serverRoot+"sensor/getSensorData.php");
+			super(serverRoot+"view_sensorData");
 			//super(serverRoot+"sensorData.xml");
 		}
 		public static function getInstance():AllSensorData
@@ -21,15 +21,15 @@ package lib.communicator.download
 				unique=new AllSensorData();
 			return unique;
 		}
-		public function set sensorDataTypeID(value:uint):void
+		public function set typeName(value:String):void
 		{
-			HS_list.request.sensorDataTypeID=value;
+			HS_list.request.typeName=value;
 		}
-		override protected function parseHSReturn(e:ResultEvent):void
+		override protected function parseHSReturn(e:Event):void
 		{
 			super.parseHSReturn(e);
 			var s:Sort=new Sort();
-			s.fields=[new SortField("@aTime",false,false)];
+			s.fields=[new SortField("time",false,false)];
 			this.recordList.sort=s;
 			this.recordList.refresh();
 		}

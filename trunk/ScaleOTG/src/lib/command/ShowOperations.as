@@ -46,6 +46,7 @@ package lib.command
 		{
 			if(allOperations.recordList.length)
 			{
+				CmdBase.mainApp.emptyImage.visible=false;
 				var sd:ControlEdit=new ControlEdit();
 				var ilst:List;
 				
@@ -75,6 +76,9 @@ package lib.command
 			}
 			else
 			{
+				CmdBase.mainApp.currentState="sIndex";
+				CmdBase.mainApp.VSI.removeAllChildren();
+				CmdBase.mainApp.emptyImage.visible=true;
 				Alert.show("您当前还没有创建任何自动操作，是否创建一个操作？","创建自动操作",Alert.YES|Alert.NO,CmdBase.mainApp,emptyHandler);
 			}
 		}
@@ -91,9 +95,9 @@ package lib.command
 			var cString:String=CmdBase.mainApp.ipt_search.text;
 			if(
 				cString==""
-			 || String(item.@targetDescription).indexOf(cString)!=-1
-			 || String(item.@typeName).indexOf(cString)!=-1
-			 || String(item.@commandDescription).indexOf(cString)!=-1
+			 || String(item.intro).indexOf(cString)!=-1
+			 || String(item.control_action).indexOf(cString)!=-1
+			 || String(item.typeName).indexOf(cString)!=-1
 			 )
 				return true;
 			else

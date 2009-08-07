@@ -13,6 +13,8 @@ package lib.command
 		public var showSensorManager:ICommand;
 		public var showEditSensor:ICommand;
 		public var showEditSensorDataType:ICommand;
+		public var showEditTarget:ICommand;
+		public var showAddSensor:ICommand;
 		public var showAddScene:ICommand;
 		public var showAddSceneControl:ICommand;
 		public var showAddOperation:ICommand;
@@ -25,16 +27,14 @@ package lib.command
 			showOperations=new ShowOperations();
 			showScene=new ShowScene();
 			showTarget=new ShowTarget();
-			showDetailData=new ShowSensorData(0);
+			showDetailData=new ShowSensorData(null);
 			showSensorManager=new ShowSensorManager();
-			showEditSensor=new ShowEditSensor(0);
-			showEditSensorDataType=new ShowEditSensorDataType(0);
+			showEditSensor=new ShowEditSensor(null);
+			showEditSensorDataType=new ShowEditSensorDataType(null);
 			showAddScene=new ShowAddScene();
-			showAddSceneControl=new ShowAddSceneControl(0);
+			showAddSceneControl=new ShowAddSceneControl(null);
 			showAddOperation=new ShowAddOperation();
 			showSetting=new ShowSetting();
-			showRSS=new ShowRSS();
-			showAssociation=new ShowAssociation();
 		}
 		public static function getInstance():Appcmd
 		{

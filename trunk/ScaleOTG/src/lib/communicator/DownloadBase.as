@@ -1,7 +1,9 @@
 package lib.communicator
 {
+	import flash.events.Event;
+	import flash.utils.ByteArray;
+	
 	import mx.collections.XMLListCollection;
-	import mx.rpc.events.ResultEvent;
 	public class DownloadBase extends CommBase
 	{
 		[Bindable]
@@ -15,17 +17,23 @@ package lib.communicator
 			rcvRes=false;
 			super(url,false, reTry);
 		}
-		override protected function parseHSReturn(e:ResultEvent):void
+		override protected function parseHSReturn(e:Event):void
 		{
 			var i:uint=0;
+			var a:String;
 			rcvRes=true;		
-			for each(var er:XML in e.result.row)//加入序号
+			
+			var returnCode:int
+			var bytes:ByteArray = ByteArray(e.target.data);
+		    var xmlStr:String = bytes.readMultiByte(bytes.length,"gb2312");
+		    this.recordXML= XML(xmlStr);
+			//this.recordXML=new XML(e.target.lastResult);
+			for each(var er:XML in recordXML.row)//加入序号
 			{
 				er.@order=i;
 				i++;
 			}
-			this.recordXML=new XML(e.result);
-			this.recordList=new XMLListCollection(e.result.row);
+			this.recordList=new XMLListCollection(recordXML.row);
 			super.parseHSReturn(e);
 		}
 		

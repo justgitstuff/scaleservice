@@ -8,7 +8,7 @@ package lib.communicator.download
 		public function AllLaddr()
 		{
 			//super(serverRoot+"Laddr.xml");
-			super(serverRoot+"sensor/getLAddrs.php");
+			super(serverRoot+"view_sensor");
 		}
 		public static function getInstance():AllLaddr
 		{

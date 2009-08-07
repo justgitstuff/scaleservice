@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加自动操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();" height="300">
+<mx:TitleWindow xmlns:vld="lib.validator.*" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" title="添加自动操作" showCloseButton="true" creationComplete="centerWindow();init();" close="closeWindow();" height="400" width="500">
 	<mx:Script>
 		<![CDATA[
+			import lib.command.Appcmd;
+			import mx.events.CloseEvent;
 			import lib.communicator.download.AllOperations;
 			import mx.managers.PopUpManager;
 			import lib.communicator.operation.AddOperation;
@@ -9,13 +11,10 @@
 			import lib.communicator.download.AllTarget;
 			import lib.communicator.download.AllCommand;
 			import lib.communicator.download.AllDataType;
+			import mx.controls.Alert;
 			private var allDataType:AllDataType;
 			private var allCommand:AllCommand;
 			private var allTarget:AllTarget;
-			public var dID:uint;
-			public var dOrder:uint;
-			public var cID:String;
-			public var tID:String;
 			public function centerWindow():void
 	        {
 	        	PopUpManager.centerPopUp(this);
@@ -31,9 +30,6 @@
 	        	allDataType=new AllDataType();
 				allDataType.addEventListener(HSListEvent.LIST_SUCCESS,onDataTypeLoaded);
 				allDataType.sendHS();
-				allCommand=new AllCommand();
-				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCommandLoaded);
-				allCommand.sendHS();
 				allTarget=new AllTarget();
 				allTarget.addEventListener(HSListEvent.LIST_SUCCESS,onTargetLoaded);
 				allTarget.sendHS();
@@ -41,25 +37,62 @@
 	        private function onDataTypeLoaded(e:Event=null):void
 			{
 				ipt_dataType.dataProvider=allDataType.recordList;
-				ipt_dataType.selectedIndex=dOrder;
+				if(allDataType.recordList.length==0)
+				{
+					Alert.show("您必须先购买与Scale系统相兼容的传感器，并为它分配一个数据类型，Scale才能够根据它检测到的数据来控制您的设备。您可能已经拥有了传感器，但是尚未将它注册到您的系统中，是否现在开始注册传感器？","缺少数据类型",Alert.YES|Alert.NO,this,showRegSensor);
+					btn_save.enabled=false;
+				}
 			}
-			private function onCommandLoaded(e:Event=null):void
+			private function showRegSensor(e:CloseEvent):void
 			{
-				ipt_cmd.dataProvider=allCommand.recordList;
+				if(e.detail==Alert.YES)
+				{
+					var invoker:Appcmd=Appcmd.getInstance();
+					invoker.showSensorManager.execute();
+				}
 			}
+			
 			private function onTargetLoaded(e:Event=null):void
 			{
 				ipt_target.dataProvider=allTarget.recordList;
+				if(allTarget.recordList.length)
+					onTargetChange();
+				else
+				{
+					Alert.show("您必须先购买与Scale系统相兼容的设备，并将其注册到系统中才能让Scale帮助您自动控制它","缺少被控设备");
+					ipt_target.enabled=false;
+					ipt_control.enabled=false;
+					btn_save.enabled=false;
+				}
+			}
+			private function onTargetChange(e:Event=null):void
+			{
+				allCommand=new AllCommand();
+				allCommand.deviceTag=ipt_target.selectedItem.deviceTag;
+				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onControlLoaded);
+				allCommand.sendHS();
+			}
+			private function onControlLoaded(e:Event=null):void
+			{
+				ipt_control.dataProvider=allCommand.recordList;
 			}
 			private function onAdd(e:Event=null):void
 			{
-				var oc:AddOperation=new AddOperation();
-				oc.lAddrID=ipt_target.selectedItem.@lAddrID;
-				oc.commandID=ipt_cmd.selectedItem.@commandID;
-				oc.sensorDataTypeID=ipt_dataType.selectedItem.@sensorDataTypeID;
-				oc.inc=ipt_over.selected?0:1;
-				oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
-				oc.sendHS();
+				if(validate())
+				{
+					var oc:AddOperation=new AddOperation();
+					oc.deviceTag=ipt_target.selectedItem.deviceTag[0];
+					oc.command=ipt_control.selectedItem.command[0];
+					oc.parameter=ipt_control.selectedItem.parameter[0];
+					oc.typeName=ipt_dataType.selectedItem.typeName[0];
+					oc.direction=ipt_over.selected?"Down":"Up";
+					oc.addEventListener(HSListEvent.OPERATION_SUCCESS,onAddSuccess);
+					oc.sendHS();
+				}
+				else
+				{
+					Alert.show("您必须选择一个数据类型和一个控制来建立新的自动控制策略","信息不完整");
+				}
 			}
 			private function onAddSuccess(e:Event=null):void
 			{
@@ -67,18 +100,28 @@
 				allOperation.sendHS();
 				closeWindow();
 			}
+			private function validate():Boolean
+			{
+				if(ipt_dataType.selectedItem==null || ipt_target.selectedItem==null || ipt_control.selectedItem==null)
+					return false;
+				else
+					return true;
+			}
 		]]>
 	</mx:Script>
 	<mx:Label x="0" y="0" text="自动操作设置" fontSize="16" fontFamily="Times New Roman" fontWeight="bold"/>
-	<mx:Label y="80" text="当" fontSize="12" fontFamily="Times New Roman" fontWeight="bold" left="60"/>
-	<mx:ComboBox left="88" right="145" y="77" id="ipt_dataType" labelField="@typeName"></mx:ComboBox>
-	<mx:RadioButton y="61" label="超过最大值" groupName="trig" right="51" id="ipt_over" selected="true"/>
-	<mx:RadioButton y="93" label="低于最小值" groupName="trig" right="51" id="ipt_below"/>
-	<mx:Label y="80" text="时" fontWeight="bold" fontFamily="Times New Roman" right="23"/>
+	<mx:ComboBox left="88" right="145" y="30" id="ipt_dataType" labelField="typeName"></mx:ComboBox>
+	<mx:RadioButton y="64" label="超过最大值" groupName="trig" right="306" id="ipt_over" selected="true"/>
+	<mx:RadioButton y="64" label="低于最小值" groupName="trig" right="212" id="ipt_below"/>
 	<mx:Label x="10" y="33" text="触发条件：" fontFamily="Times New Roman" fontWeight="bold"/>
-	<mx:Label x="10" y="144" text="采取措施：" fontFamily="Times New Roman" fontWeight="bold"/>
-	<mx:ComboBox y="173" left="60" width="160" id="ipt_cmd" labelField="@commandDescription"></mx:ComboBox>
-	<mx:ComboBox y="173" right="10" left="228" id="ipt_target" labelField="@targetDescription"></mx:ComboBox>
-	<mx:Button label="保存" icon="@Embed(source='../../img/save.png')" bottom="10" right="10" click="onAdd();"/>
+	<mx:Label x="10" y="101" text="操作对象：" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:ComboBox y="98" left="88" width="247" id="ipt_target" labelField="intro" change="onTargetChange();"></mx:ComboBox>
+	<mx:Button label="保存" icon="@Embed(source='../../img/save.png')" bottom="10" right="10" click="onAdd();" id="btn_save"/>
+	<mx:AdvancedDataGrid x="14" y="130" id="ipt_control" designViewDataType="flat" width="456" height="172">
+		<mx:columns>
+			<mx:AdvancedDataGridColumn headerText="命令" dataField="command"/>
+			<mx:AdvancedDataGridColumn headerText="参数" dataField="parameter"/>
+		</mx:columns>
+	</mx:AdvancedDataGrid>
 	
 </mx:TitleWindow>

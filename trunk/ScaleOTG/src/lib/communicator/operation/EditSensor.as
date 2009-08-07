@@ -1,33 +1,36 @@
 package lib.communicator.operation
 {
-	import flash.events.Event;
-	
 	import lib.communicator.CommBase;
 
 	public class EditSensor extends CommBase
 	{
-		public var sensorID:uint;
-		public var sensorName:String;
-		public var location:String;
-		public var manufacture:String;
-		public var description:String;
-		public var memo:String;
-		
-		public function EditSensor()
+		public function EditSensor(needParse:Boolean=true)
 		{
-			//super(serverRoot+"EditSensor.xml",true);
-			super(serverRoot+"sensor/modifySensor.php",true);
+			super(serverRoot+"edit_sensor",needParse);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sensorTag(value:String):void
 		{
-			HS_list.request.sensorID=sensorID;
-			HS_list.request.sensorName=sensorName;
-			HS_list.request.location=location;
-			HS_list.request.manufacture=manufacture;
-			HS_list.request.description=description;
-			HS_list.request.memo=memo;
-			super.sendHS();
+			HS_list.request.sensorTag=value;
 		}
-		
+		public function set sensorName(value:String):void
+		{
+			HS_list.request.sensorName=value;
+		}
+		public function set location(value:String):void
+		{
+			HS_list.request.location=value;
+		}
+		public function set manufacturer(value:String):void
+		{
+			HS_list.request.manufacturer=value;
+		}
+		public function set description(value:String):void
+		{
+			HS_list.request.description=value;
+		}
+		public function set memo(value:String):void
+		{
+			HS_list.request.memo=value;
+		}
 	}
 }

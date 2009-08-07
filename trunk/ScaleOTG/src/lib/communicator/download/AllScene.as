@@ -8,7 +8,7 @@ package lib.communicator.download
 		public function AllScene()
 		{
 			//super(serverRoot+"Sensor.xml");
-			super(serverRoot+"scene/getScene.php");
+			super(serverRoot+"view_scene");
 		}
 		public static function getInstance():AllScene
 		{

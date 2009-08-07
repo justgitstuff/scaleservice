@@ -2,26 +2,59 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" fontSize="12">
 	<mx:Script>
 		<![CDATA[
+			import lib.communicator.download.AllCommand;
+			import lib.command.ShowEditTarget;
+			import lib.command.Appcmd;
 			import lib.events.HSListEvent;
 			import lib.communicator.operation.AddManual;
-			public var controlTargetID:String;
+			import mx.controls.Alert;
+			private var _deviceTag:String;
+			private var invoker:Appcmd;
+			private var allCommand:AllCommand;
 			private function onExecute():void
 			{
-				var am:AddManual=new AddManual();
-				am.lAddrID=controlTargetID;
-				am.commandID=cmdList.selectedItem.@commandID;
-				am.sendHS();
+				if(validate())
+				{
+					var am:AddManual=new AddManual();
+					am.deviceTag=_deviceTag;
+					am.command=cmdList.selectedItem.command;
+					am.parameter=cmdList.selectedItem.parameter;
+					am.sendHS();
+				}
+				else
+					Alert.show("请您先选择一个命令","信息不完整");
 			}
-			
+			public function set deviceTag(value:String):void
+			{
+				invoker=Appcmd.getInstance();
+				invoker.showEditTarget=new ShowEditTarget(value);
+				this._deviceTag=value;
+				allCommand=AllCommand.getInstance();
+				allCommand.deviceTag=value;
+				allCommand.addEventListener(HSListEvent.LIST_SUCCESS,onCMDLoaded);
+				allCommand.sendHS();
+			}
+			private function onCMDLoaded(e:HSListEvent):void
+			{
+				cmdList.dataProvider=allCommand.recordList;
+			}
+			private function validate():Boolean
+			{
+				if(cmdList.selectedItem==null)
+					return false;
+				else
+					return true;
+			}
 		]]>
 	</mx:Script>
-	<mx:Button label="执行" click="onExecute();" icon="@Embed(source='../../img/yes.png')" bottom="10" horizontalCenter="0"/>
+	<mx:Button label="执行" click="onExecute();" icon="@Embed(source='../../img/yes.png')" bottom="10" right="10"/>
 	<mx:Label x="10" y="10" text="可用操作"/>
 	<mx:DataGrid right="10" left="10" top="36" bottom="55" id="cmdList" editable="true">
 		<mx:columns>
-			<mx:DataGridColumn headerText="命令描述" dataField="@commandDescription" editable="false"/>
-			<mx:DataGridColumn headerText="参数"  itemEditor="mx.controls.TextInput"/>
+			<mx:DataGridColumn headerText="命令描述" dataField="command" editable="false"/>
+			<mx:DataGridColumn headerText="参数" dataField="parameter" editable="false"/>
 		</mx:columns>
 	</mx:DataGrid>
+	<mx:Button label="修改设备信息..." icon="@Embed(source='../../img/customize_us.png')" bottom="10" left="10" click="invoker.showEditTarget.execute();"/>
 	
 </mx:Canvas>

@@ -17,6 +17,9 @@
 			</mx:AddChild>
 			<mx:SetProperty target="{indexPanel}" name="y" value="10"/>
 			<mx:RemoveChild target="{button1}"/>
+			<mx:AddChild relativeTo="{indexPanel}" position="lastChild">
+				<mx:Image id="emptyImage" x="76" y="165" source="img/isEmpty.png" scaleContent="false" visible="false"/>
+			</mx:AddChild>
 
 		</mx:State>
 		<mx:State name="sDetail" basedOn="sIndex">
@@ -61,16 +64,16 @@
 				switch(currentVSIState)
 				{
 					case 1://选择的是SensorDataType
-						invoker.showDetailData=new ShowSensorData(Number(ilst.selectedItem.@sensorDataTypeID));
+						invoker.showDetailData=new ShowSensorData(ilst.selectedItem.typeName);
 						break;
 					case 2://选择的是scene
-						invoker.showDetailData=new ShowSceneControl(Number(ilst.selectedItem.@sceneID));
+						invoker.showDetailData=new ShowSceneControl(ilst.selectedItem.sceneName);
 						break;
 					case 3://选择的是AutoControl
-						invoker.showDetailData=new ShowOperationDetail(ilst.selectedItem.@lAddrID,ilst.selectedItem.@commandID,Number(ilst.selectedItem.@sensorDataTypeID));
+						invoker.showDetailData=new ShowOperationDetail(ilst.selectedItem.typeName,ilst.selectedItem.deviceTag,ilst.selectedItem.intro,ilst.selectedItem.control_command,ilst.selectedItem.control_parameter);
 						break;
 					case 4://选择的是ManualControl
-						invoker.showDetailData=new ShowTargetDetail(ilst.selectedItem.@lAddrID);
+						invoker.showDetailData=new ShowTargetDetail(ilst.selectedItem.deviceTag);
 						break;
 				}
 				invoker.showDetailData.execute();
@@ -111,8 +114,6 @@
 	<mx:Image source="img/Logo.png" scaleContent="true" width="185" height="165" right="10" top="10"/>
 	<mx:Resize duration="600" id="eff_resize"/>
 	<mx:Move duration="600" id="eff_move"/>
-	<ns1:Calendar right="10" width="388" resizeEffect="{eff_resize}" moveEffect="{eff_move}" bottom="10">
-	</ns1:Calendar>
 	<mx:Panel moveEffect="{eff_move}" resizeEffect="{eff_resize}" layout="absolute" id="indexPanel" width="300" x="318" height="580" y="-600">
 		<mx:TextInput left="10" right="96" top="10" id="ipt_search"/>
 		<mx:Button label="快速搜索" top="10" right="10" click="searchFunction();"/>
@@ -120,10 +121,10 @@
 	</mx:Panel>
 	<mx:Panel moveEffect="{eff_move}" resizeEffect="{eff_resize}" layout="vertical" height="580" id="detailPanel" y="-600" left="426" right="10">
 	</mx:Panel>	
-	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="家庭信息" click="invoker.showSensorDataType.execute();" width="300" height="100" icon="@Embed(source='img/SensorDataType_L.png')" id="mb1" y="10" left="462"/>
-	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="进入场景" click="invoker.showScene.execute();" width="300" height="100" icon="@Embed(source='img/favourites.png')" id="mb2" y="118" left="354"/>
-	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="自动控制" click="invoker.showOperations.execute();" width="300" height="100" icon="@Embed(source='img/AutoCtrl_L.png')" y="226" id="mb3" left="246"/>
-	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="手动控制" click="invoker.showTarget.execute();" width="300" height="100" icon="@Embed(source='img/manualCtrl.png')" y="334" id="mb4" left="138"/>
+	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="数据" click="invoker.showSensorDataType.execute();" width="300" height="100" icon="@Embed(source='img/SensorDataType_L.png')" id="mb1" y="10" left="462"/>
+	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="场景" click="invoker.showScene.execute();" width="300" height="100" icon="@Embed(source='img/favourites.png')" id="mb2" y="118" left="354"/>
+	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="自动控制策略" click="invoker.showOperations.execute();" width="300" height="100" icon="@Embed(source='img/AutoCtrl_L.png')" y="226" id="mb3" left="246"/>
+	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="设备" click="invoker.showTarget.execute();" width="300" height="100" icon="@Embed(source='img/manualCtrl.png')" y="334" id="mb4" left="138"/>
 	<mx:Button moveEffect="{eff_move}" resizeEffect="{eff_resize}" label="系统配置" click="invoker.showSetting.execute();" width="300" height="100" icon="@Embed(source='img/customize.png')" id="mb5" y="442" left="30"/>
 	<mx:Button click="invoker.showRSS.execute();" x="10" y="553" label="搜索..." id="button1" icon="@Embed(source='img/info_s.png')" width="100"/>
 	<album3d:Album3D visible="false" id="quickTouchPanel" dataProvider="{destUrls}" tileWidth="240" tileHeight="180" padding="20" zoomViewZ="-300" fullViewZ="1500" startPosX="-480" left="0" right="0" top="0" bottom="0"/>

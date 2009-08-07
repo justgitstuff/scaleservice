@@ -15,5 +15,7 @@
 			
 		]]>
 	</mx:Script>
-	<mx:Label text="{data.@targetDescription}" fontSize="16" right="0" top="10" left="90" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label text="{data.deviceTag}" fontSize="16" right="0" top="10" left="90" fontFamily="Times New Roman" fontWeight="bold"/>
+	<mx:Label x="90" y="43" text="{data.intro}" width="140"/>
+	<mx:Label x="117" y="62" text="{data.currentState}"/>
 </mx:Canvas>

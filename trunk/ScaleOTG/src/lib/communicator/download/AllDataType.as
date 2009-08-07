@@ -7,7 +7,7 @@ package lib.communicator.download
 		private static var unique:AllDataType;
 		public function AllDataType()
 		{
-			super(serverRoot+"sensor/getSensorDataTypes.php");
+			super(serverRoot+"view_dataType");
 			//super(serverRoot+"sensorDataType.xml");
 		}
 		public static function getInstance():AllDataType

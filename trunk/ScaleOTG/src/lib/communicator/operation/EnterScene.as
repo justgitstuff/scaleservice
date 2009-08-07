@@ -6,15 +6,13 @@ package lib.communicator.operation
 
 	public class EnterScene extends CommBase
 	{
-		public var sceneID:uint
 		public function EnterScene()
 		{
-			super(serverRoot+'scene/enterScene.php',true);
+			super(serverRoot+'enter_scene',true);
 		}
-		override public function sendHS(e:Event=null):void
+		public function set sceneName(value:String):void
 		{
-			HS_list.request.sceneID=sceneID;
-			super.sendHS();
+			HS_list.request.sceneName=value;
 		}
 	}
 }
