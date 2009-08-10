@@ -24,6 +24,12 @@ import exception.UserException;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Device extends DOBase
 {
+	/**
+	 * 
+	 * @param deviceTag
+	 * @return
+	 * @throws UserException
+	 */
 	public static Device getDevice(String deviceTag) throws UserException
 	{
 		UserService userService = UserServiceFactory.getUserService();
@@ -43,6 +49,23 @@ public class Device extends DOBase
 	    {
 	    	throw new UserException(UserException.NotLogedIn);
 	    }
+	}
+	/**
+	 * 
+	 * @param deviceTag
+	 * @param userNickname
+	 * @return
+	 */
+	public static Device getDevice(String deviceTag,String userNickname)
+	{
+		PersistenceManager pm = getPersistenceManager();
+		try
+		{
+			return pm.getObjectById(Device.class, userNickname+"."+deviceTag);
+		}catch(JDOObjectNotFoundException e)
+		{
+			return null;
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static List<Device> getDeviceList() throws UserException
@@ -87,6 +110,21 @@ public class Device extends DOBase
 		this.intro = intro;
 		this.currentState="Unknown";
 		this.control=new ArrayList<Control>();
+	}
+	public void saveToUser(String userNickname) throws DeviceAndControlException
+	{
+		if(this.deviceID==null)
+		{
+	    	this.userNickname=userNickname;
+	    	Key id = KeyFactory.createKey(Device.class.getSimpleName(),userNickname+"."+deviceTag);
+	    	this.deviceID=id;
+	    	PersistenceManager pm = getPersistenceManager();
+			pm.makePersistent(this);
+		}
+		else
+		{
+			throw new DeviceAndControlException(DeviceAndControlException.PrimaryKeyNotNull);
+		}
 	}
 	public void saveAsNew() throws DeviceAndControlException, UserException
 	{

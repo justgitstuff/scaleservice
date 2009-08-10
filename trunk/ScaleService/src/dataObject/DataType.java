@@ -26,6 +26,7 @@ import exception.UserException;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class DataType extends DOBase
 {
+	public static final String notInNetwork="(Not In Network)";
 	/**
 	 * 查找该属于用户的，指定数据类型名称的数据类型
 	 * @param typeName
@@ -54,6 +55,19 @@ public class DataType extends DOBase
 	    }
 		return d;
 	}
+	public static DataType getDataType(String typeName,String userNickname)
+	{
+		PersistenceManager pm = getPersistenceManager();
+		DataType d=null;
+		try
+		{
+			d = pm.getObjectById(DataType.class, userNickname+"."+typeName);
+		}catch(JDOObjectNotFoundException e)
+		{
+			d = null;
+		}
+		return d;
+	}
 	@SuppressWarnings("unchecked")
 	public static List<DataType> getDataType() throws UserException
 	{
@@ -72,6 +86,16 @@ public class DataType extends DOBase
 	    {
 	    	throw new UserException(UserException.NotLogedIn);
 	    }
+	}
+	@SuppressWarnings("unchecked")
+	public static List<DataType> getDataTypeList(String userNickname)
+	{
+		PersistenceManager pm = getPersistenceManager();
+		Query query = pm.newQuery(DataType.class);
+		query.setFilter("userNickname == un");
+		query.declareParameters("String un");
+		List<DataType> results = (List<DataType>) query.execute(userNickname);
+		return results;
 	}
 	public static void update(String unit, String typeName, Double maxCustom,Double minCustom) throws DataTypeException, UserException
 	{

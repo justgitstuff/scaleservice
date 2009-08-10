@@ -2,6 +2,7 @@ package scaleService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +16,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Element;
 
 import util.Generator;
-
 import dataObject.DataType;
+import dataObject.Operation;
+import dataObject.Sensor;
 import exception.DataTypeException;
 import exception.UserException;
 
@@ -34,7 +36,17 @@ public class DeleteDataType extends HttpServlet
 			String typeName = req.getParameter("typeName");
 			DataType targetDataType=DataType.getDataType(typeName);
 			if(targetDataType==null)
-				throw new DataTypeException(DataTypeException.DataTypeNotFonund); 
+				throw new DataTypeException(DataTypeException.DataTypeNotFonund);
+			List<Operation> operationList=Operation.getOperationList(typeName);
+			for(Operation o:operationList)
+			{
+				Operation.deleteDO(o);
+			}
+			List<Sensor> sensorList=Sensor.getSensorByTypeName(typeName);
+			for(Sensor e:sensorList)
+			{
+				e.setTypeName(DataType.notInNetwork);
+			}
 			DataType.deleteDO(targetDataType);
 			resp.setContentType("text/html;charset=gb2312");
 			PrintWriter out=resp.getWriter();
@@ -57,7 +69,7 @@ public class DeleteDataType extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			resp.sendRedirect("/index.jsp");
+			DataType.closePersistenceManager();
 		}
 	}
 }

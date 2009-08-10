@@ -67,7 +67,6 @@ public class EditSensor extends HttpServlet
 		} finally
 		{
 			Sensor.closePersistenceManager();
-			resp.sendRedirect("/index.jsp");
 		}
 	}
 }
