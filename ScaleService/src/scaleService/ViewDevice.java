@@ -2,6 +2,8 @@ package scaleService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.w3c.dom.Element;
 
 import util.Generator;
 import dataObject.Device;
+import exception.DeviceAndControlException;
 import exception.UserException;
 
 public class ViewDevice extends HttpServlet
@@ -36,13 +39,32 @@ public class ViewDevice extends HttpServlet
 	{
 		try
 		{
-			resp.setContentType("text/html;charset=gb2312");
-			PrintWriter out=resp.getWriter();
-			Element devices=Generator.buildDeviceXML(Device.getDeviceList());
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(devices); 
-			StreamResult result = new StreamResult(out);
-			transformer.transform(source, result);
+			String deviceTag = req.getParameter("deviceTag");
+			if(deviceTag==null)
+			{
+				resp.setContentType("text/html;charset=gb2312");
+				PrintWriter out=resp.getWriter();
+				Element devices=Generator.buildDeviceXML(Device.getDeviceList());
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				DOMSource source = new DOMSource(devices); 
+				StreamResult result = new StreamResult(out);
+				transformer.transform(source, result);
+			}
+			else
+			{
+				Device targetDevice=Device.getDevice(deviceTag);
+				if(targetDevice==null)
+					throw new DeviceAndControlException(DeviceAndControlException.DeviceNotExist);
+				List<Device> DeviceInfo=new ArrayList<Device>();
+				DeviceInfo.add(targetDevice);
+				resp.setContentType("text/html;charset=gb2312");
+				PrintWriter out=resp.getWriter();
+				Element devices=Generator.buildDeviceXML(DeviceInfo);
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				DOMSource source = new DOMSource(devices); 
+				StreamResult result = new StreamResult(out);
+				transformer.transform(source, result);
+			}
 		} catch (TransformerConfigurationException e)
 		{
 			// TODO Auto-generated catch block
@@ -56,6 +78,10 @@ public class ViewDevice extends HttpServlet
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UserException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DeviceAndControlException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

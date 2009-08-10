@@ -1,5 +1,6 @@
 package dataObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -16,12 +17,39 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import exception.DataTypeException;
 import exception.SensorException;
 import exception.UserException;
+import factory.SensorDataFactory;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Sensor extends DOBase
 {
+	@SuppressWarnings("unchecked")
+	public static List<Sensor> getSensorByTypeName(String typeName) throws UserException
+	{
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistenceManager();
+			Query query = pm.newQuery(Sensor.class);
+			query.setFilter("userNickname == un");
+			query.declareParameters("String un");
+			List<Sensor> results = (List<Sensor>) query.execute(user.getNickname());
+			List<Sensor> returnSensor=new ArrayList<Sensor>();
+			for(Sensor s:results)
+			{
+				if(s.getTypeName()!=null && s.getTypeName().equals(typeName))
+					returnSensor.add(s);
+			}
+			return returnSensor;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
+	}
 	public static Sensor getSensor(String sensorTag) throws UserException
 	{
 		UserService userService = UserServiceFactory.getUserService();
@@ -41,6 +69,23 @@ public class Sensor extends DOBase
 	    {
 	    	throw new UserException(UserException.NotLogedIn);
 	    }
+	}
+	/**
+	 * 
+	 * @param sensorTag
+	 * @param userNickname
+	 * @return
+	 */
+	public static Sensor getSensor(String sensorTag,String userNickname)
+	{
+		PersistenceManager pm = getPersistenceManager();
+		try
+		{
+			return pm.getObjectById(Sensor.class, userNickname+"."+sensorTag);
+		}catch(JDOObjectNotFoundException e)
+		{
+			return null;
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static List<Sensor> getSensor() throws UserException
@@ -105,10 +150,26 @@ public class Sensor extends DOBase
 	 * @param sensorName
 	 * @param location
 	 * @param manufacturer
+	 * @throws SensorException 
+	 * @throws UserException 
 	 * @throws UserException 
 	 * @throws DataTypeException 
 	 */
-	
+	public void saveToUser(String userNickname) throws SensorException
+	{
+		if(this.sensorID==null)
+		{
+	    	this.userNickname=userNickname;
+	    	Key id = KeyFactory.createKey(Sensor.class.getSimpleName(),userNickname+"."+sensorTag);
+	    	this.sensorID=id;
+	    	PersistenceManager pm = getPersistenceManager();
+			pm.makePersistent(this);
+		}
+		else
+		{
+			throw new SensorException(SensorException.PrimaryKeyNotNull);
+		}
+	}
 	/**
 	 * 自动加上用户属性，储存为新的传感器
 	 * @throws SensorException
@@ -141,6 +202,12 @@ public class Sensor extends DOBase
 		{
 			throw new SensorException(SensorException.SensorAlreadyExist);
 		}
+	}
+	public void addSensorData(Double value,String unit,String userNickname) throws UserException
+	{
+		DataType d=DataType.getDataType(typeName,userNickname);
+		d.addSensorData(SensorDataFactory.get().newSensorData(value));
+		d.setUnit(unit);
 	}
 	/**
 	 * @return the userNickname

@@ -22,7 +22,6 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 import exception.OperationException;
 import exception.UserException;
-import factory.PMF;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable="true")
 public class Operation extends DOBase
@@ -33,7 +32,7 @@ public class Operation extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = PMF.get().getPersistenceManager();
+			PersistenceManager pm = getPersistenceManager();
 			try
 			{
 				return pm.getObjectById(Operation.class, user.getNickname()+"."+KeyFactory.keyToString(controlID)+"/"+KeyFactory.keyToString(dataTypeID));
@@ -54,12 +53,42 @@ public class Operation extends DOBase
 	    User user = userService.getCurrentUser();
 	    if (user != null)
 	    {
-			PersistenceManager pm = PMF.get().getPersistenceManager();
+			PersistenceManager pm = getPersistenceManager();
 			Query query = pm.newQuery(Operation.class);
 			query.setFilter("userNickname == un");
 			query.declareParameters("String un");
 			List<Operation> results = (List<Operation>) query.execute(user.getNickname());
 			return results;
+	    }
+	    else
+	    {
+	    	throw new UserException(UserException.NotLogedIn);
+	    }
+	}
+	@SuppressWarnings("unchecked")
+	public static List<Operation> getOperationList(String typeName) throws UserException
+	{
+		UserService userService = UserServiceFactory.getUserService();
+	    User user = userService.getCurrentUser();
+	    if (user != null)
+	    {
+			PersistenceManager pm = getPersistenceManager();
+			Query query = pm.newQuery(Operation.class);
+			query.setFilter("userNickname == un");
+			query.declareParameters("String un");
+			List<Operation> results = (List<Operation>) query.execute(user.getNickname());
+			List<Operation> afterFilter=new ArrayList<Operation>();
+			Iterator<Operation> it=results.iterator();
+			Operation iOperation;
+			while(it.hasNext())
+			{
+				iOperation=it.next();
+				if(iOperation.getDataType().getTypeName().equals(typeName))
+				{
+					afterFilter.add(iOperation);
+				}
+			}
+			return afterFilter;
 	    }
 	    else
 	    {
@@ -103,7 +132,7 @@ public class Operation extends DOBase
 		    	this.userNickname=user.getNickname();
 		    	Key id = KeyFactory.createKey(Operation.class.getSimpleName(),userNickname+"."+KeyFactory.keyToString(controlID)+"/"+KeyFactory.keyToString(dataTypeID));
 		    	this.operationID=id;
-		    	PersistenceManager pm = PMF.get().getPersistenceManager();
+		    	PersistenceManager pm = getPersistenceManager();
 				pm.makePersistent(this);
 		    }
 		    else
@@ -117,6 +146,11 @@ public class Operation extends DOBase
 		{
 			throw new OperationException(OperationException.OperationAlreadyExist);
 		}
+	}
+	public void deleteThis()
+	{
+		PersistenceManager pm = getPersistenceManager();
+		pm.deletePersistent(this);
 	}
 	/**
 	 * @return the operationID
@@ -230,9 +264,37 @@ public class Operation extends DOBase
 		}
 		return allToDo;
 	}
+	public static List<Operation> findAllToDo(String userNickname)
+	{
+		List<Operation> allToDo=new ArrayList<Operation>();
+		try
+		{
+			List<DataType> dataType = (List<DataType>) DataType.getDataTypeList(userNickname);//获取该用户的所有数据类型
+			Iterator<DataType> it=dataType.iterator();
+			while(it.hasNext())
+			{
+				allToDo.addAll(it.next().findToDo());
+			}
+		}finally
+		{
+			//noting to do
+		}
+		return allToDo;
+	}
 	public static List<Control> findAllControl() throws UserException
 	{
 		List<Operation> fao=findAllToDo();
+		List<Control> ret=new ArrayList<Control>();
+		Iterator<Operation> it=fao.iterator();
+		while(it.hasNext())
+		{
+			ret.add(it.next().getControl());
+		}
+		return ret;
+	}
+	public static List<Control> findAllControl(String userNickname)
+	{
+		List<Operation> fao=findAllToDo(userNickname);//找出所有会被执行的Operation
 		List<Control> ret=new ArrayList<Control>();
 		Iterator<Operation> it=fao.iterator();
 		while(it.hasNext())

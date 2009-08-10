@@ -1,0 +1,30 @@
+@charset "utf-8";
+/* CSS Document */
+
+table {
+}
+.titleRow {
+	background-image: url(Image/bg.png);
+	background-repeat: repeat;
+	background-attachment: fixed;
+	vertical-align: top;
+	text-align: justify;
+}
+.titleText {
+	font-family: "黑体";
+	font-size: 24px;
+	font-style: normal;
+	text-transform: uppercase;
+	color: #33F;
+}
+.contentRow {
+	background-image: url(Image/optionBG.png);
+	background-repeat: repeat-x;
+	vertical-align: middle;
+	font-family: "幼圆";
+	height: 32px;
+	margin-bottom: auto;
+}
+.detailButton {
+	text-align: right;
+}

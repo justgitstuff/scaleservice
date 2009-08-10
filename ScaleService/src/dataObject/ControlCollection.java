@@ -55,6 +55,19 @@ public class ControlCollection extends DOBase
 	    }
 		return d;
 	}
+	@SuppressWarnings("unchecked")
+	public static ControlCollection getControlCollection(String userNickname)
+	{
+		PersistenceManager pm = getPersistenceManager();
+		Query query = pm.newQuery(ControlCollection.class);
+		query.setFilter("userNickname == un");
+		query.declareParameters("String un");
+		List<ControlCollection> dl = (List<ControlCollection>) query.execute(userNickname);
+		if(dl.iterator().hasNext())
+			return dl.iterator().next();
+		else
+			return null;
+	}
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key controlCollectionID;
@@ -62,7 +75,7 @@ public class ControlCollection extends DOBase
 	private String userNickname;
 	@Persistent
 	private List<Key> controlList;
-	public ControlCollection() throws UserException
+	public ControlCollection()
 	{
 		UserService userService = UserServiceFactory.getUserService();
 	    User user = userService.getCurrentUser();
@@ -72,10 +85,7 @@ public class ControlCollection extends DOBase
 	    	this.userNickname=user.getNickname();
 	    	controlList=new ArrayList<Key>();
 	    }
-	    else
-	    {
-	    	throw new UserException(UserException.NotLogedIn);
-	    }
+	    
 	}
 	/**
 	 * 将Control插入待执行列表中
@@ -131,6 +141,11 @@ public class ControlCollection extends DOBase
 		}
 		return hasRepeat;
 	}
+	public void clearControlList()
+	{
+		if(controlList!=null)
+			controlList.clear();
+	}
 	/**
 	 * @return the controlCollectionID
 	 */
@@ -149,10 +164,13 @@ public class ControlCollection extends DOBase
 	{
 		PersistenceManager pm=getPersistenceManager();
 		List<Control> re=new ArrayList<Control>();
-		Iterator<Key> it=controlList.iterator();
-		while(it.hasNext())
+		if(controlList!=null)
 		{
-			re.add(pm.getObjectById(Control.class, it.next()));
+			Iterator<Key> it=controlList.iterator();
+			while(it.hasNext())
+			{
+				re.add(pm.getObjectById(Control.class, it.next()));
+			}
 		}
 		return re;
 	}

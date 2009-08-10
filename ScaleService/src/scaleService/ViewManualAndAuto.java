@@ -43,9 +43,10 @@ public class ViewManualAndAuto extends HttpServlet
 			ControlCollection cc=ControlCollection.getControlCollection();
 			List<Control> ret=Operation.findAllControl();
 			ret.addAll(cc.getControl());
-			Element operation=Generator.buildControlXML(ret);
+			Element vm=Generator.buildControlXML(ret);
+			cc.clearControlList();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			DOMSource source = new DOMSource(operation); 
+			DOMSource source = new DOMSource(vm); 
 			StreamResult result = new StreamResult(out);
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e)
@@ -66,7 +67,7 @@ public class ViewManualAndAuto extends HttpServlet
 			e.printStackTrace();
 		} finally
 		{
-			//nothing
+			ControlCollection.closePersistenceManager();
 		}
 	}
 }

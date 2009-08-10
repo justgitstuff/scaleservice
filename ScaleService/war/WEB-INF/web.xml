@@ -5,6 +5,14 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
 	<servlet>
+		<servlet-name>Quercus Servlet</servlet-name>
+		<servlet-class>com.caucho.quercus.servlet.QuercusServlet</servlet-class>
+			<init-param>
+			<param-name>ini-file</param-name>
+			<param-value>WEB-INF/php.ini</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
 		<servlet-name>addSensor</servlet-name>
 		<servlet-class>scaleService.AddSensor</servlet-class>
 	</servlet>
@@ -23,6 +31,14 @@
     <servlet>
         <servlet-name>registerSensor</servlet-name>
         <servlet-class>scaleService.RegisterSensor</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>registerSensorWithNewDataType</servlet-name>
+        <servlet-class>scaleService.RegSensorWithNewDataType</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>unregisterSensor</servlet-name>
+        <servlet-class>scaleService.UnRegSensor</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>addDataType</servlet-name>
@@ -75,6 +91,10 @@
     <servlet>
         <servlet-name>addOperation</servlet-name>
         <servlet-class>scaleService.AddOperation</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>deleteOperation</servlet-name>
+        <servlet-class>scaleService.DeleteOperation</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewOperation</servlet-name>
@@ -135,6 +155,10 @@
     
     
     <servlet-mapping>
+		<servlet-name>Quercus Servlet</servlet-name>
+		<url-pattern>*.php</url-pattern>
+	</servlet-mapping>
+    <servlet-mapping>
 		<servlet-name>addSensor</servlet-name>
 		<url-pattern>/add_sensor</url-pattern>
 	</servlet-mapping>
@@ -153,6 +177,14 @@
     <servlet-mapping>
         <servlet-name>registerSensor</servlet-name>
         <url-pattern>/register_sensor</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>registerSensorWithNewDataType</servlet-name>
+        <url-pattern>/register_sensorAndDataType</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>unregisterSensor</servlet-name>
+        <url-pattern>/unregister_sensor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>addDataType</servlet-name>
@@ -211,6 +243,10 @@
         <url-pattern>/view_operation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>deleteOperation</servlet-name>
+        <url-pattern>/delete_operation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>viewToDo</servlet-name>
         <url-pattern>/view_toDo</url-pattern>
     </servlet-mapping>
@@ -259,7 +295,60 @@
         <url-pattern>/view_manualAndAuto</url-pattern>
     </servlet-mapping>
     
+    <servlet>
+        <servlet-name>CCR_up</servlet-name>
+        <servlet-class>ccrAPI.UploadInterface</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CCR_up</servlet-name>
+        <url-pattern>/CCR/up</url-pattern>
+    </servlet-mapping>
+     <servlet>
+        <servlet-name>CCR_down</servlet-name>
+        <servlet-class>ccrAPI.DownloadInterface</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CCR_down</servlet-name>
+        <url-pattern>/CCR/down</url-pattern>
+    </servlet-mapping>
+     <servlet>
+        <servlet-name>CCR_pong</servlet-name>
+        <servlet-class>ccrAPI.Pong</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CCR_pong</servlet-name>
+        <url-pattern>/CCR/pong</url-pattern>
+    </servlet-mapping>
+    
+    
+    <servlet>
+        <servlet-name>policy</servlet-name>
+        <servlet-class>util.CrossDomain</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>policy</servlet-name>
+        <url-pattern>/crossdomain.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>mobile_enter_scene</servlet-name>
+        <servlet-class>mobileAPI.EnterScene</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mobile_enter_scene</servlet-name>
+        <url-pattern>/mobile/enter_scene</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>mobile_add_manual</servlet-name>
+        <servlet-class>mobileAPI.AddManual</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mobile_add_manual</servlet-name>
+        <url-pattern>/mobile/add_manual</url-pattern>
+    </servlet-mapping>
+    
     <welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>layoutSelector.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>
